@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { haversineDistance } from "../../src/utils";
+import { haversineDistance } from "../../src/utils/geographic";
 
 describe("haversineDistance", () => {
   it("calculates zero distance for same points", () => {
