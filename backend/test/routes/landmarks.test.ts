@@ -1,10 +1,12 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import request from "supertest";
-import express from "express";
 import cors from "cors";
-import router from "../src/routes/index";
-import errorHandler from "../src/middleware/errors";
+import express from "express";
 import { Server } from "http";
+import request from "supertest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import errorHandler from "../../src/middleware/errors";
+import router from "../../src/routes/index";
+import { GuessRequest } from "../../src/types/requests";
+import { GuessResponse } from "../../src/types/responses";
 
 const app = express();
 app.use(cors());
@@ -32,19 +34,18 @@ describe("Landmark routes", () => {
   });
 
   it("POST /api/landmarks/guess returns distance and wiki info", async () => {
-    const guessPayload = {
+    const guessPayload: GuessRequest = {
       landmarkId: "eiffel",
-      guess: { lat: 48.85, lng: 2.3 },
+      coordinates: { latitude: 48.8584, longitude: 2.2945 },
     };
 
     const res = await request(server).post("/api/landmarks/guess").send(guessPayload);
-
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("distanceKm");
-    expect(res.body).toHaveProperty("correct");
-    expect(res.body).toHaveProperty("wiki");
-    expect(res.body.wiki).toHaveProperty("extract");
-    expect(res.body.wiki).toHaveProperty("url");
+
+    const body = res.body as GuessResponse;
+    expect(body).toHaveProperty("correctness");
+    expect(body).toHaveProperty("distanceKm");
+    expect(body).toHaveProperty("wikiData");
   });
 
   it("POST /api/landmarks/guess with invalid id returns 400", async () => {

@@ -1,8 +1,9 @@
-import axios from "axios";
 import { Request, Response, Router } from "express";
 import { getLandmarkById, getRandomLandmark } from "../data/examples";
-import { GuessRequest } from "../types";
+import { GuessRequest } from "../types/requests";
+import { GuessCorrectness, GuessResponse, WikiData } from "../types/responses";
 import { haversineDistance } from "../utils";
+import { getWikiSummary } from "../utils/landmark";
 
 const router = Router();
 
@@ -12,7 +13,7 @@ router.get("/random", (_req: Request, res: Response) => {
 });
 
 router.post("/guess", async (req: Request, res: Response) => {
-  const { landmarkId, guess } = req.body as GuessRequest;
+  const { landmarkId, coordinates } = req.body as GuessRequest;
 
   const landmark = getLandmarkById(landmarkId);
   if (!landmark) {
@@ -20,38 +21,31 @@ router.post("/guess", async (req: Request, res: Response) => {
   }
 
   const distanceKm = haversineDistance(
-    landmark.coords.lat,
-    landmark.coords.lng,
-    guess.lat,
-    guess.lng
+    landmark.props.coordinates.latitude,
+    landmark.props.coordinates.longitude,
+    coordinates.latitude,
+    coordinates.longitude
   );
 
-  const wikiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${landmark.wikiTitle}`;
-
   try {
-    const wikiResponse = await axios.get(wikiUrl, {
-      headers: {
-        Accept: "application/json",
-        "User-Agent": "LandmarkQuizApp/1.0",
-      },
-    });
-    const wikiData = wikiResponse.data;
+    const wikiSummary = await getWikiSummary(landmark.props.wikiUrl);
+    const wikiData: WikiData = {
+      extract: wikiSummary.extract,
+      url: wikiSummary.content_urls?.desktop?.page || "",
+    };
 
-    res.json({
-      correct: landmark.coords,
-      distanceKm,
-      wiki: {
-        extract: wikiData.extract,
-        url: wikiData.content_urls.desktop.page,
+    const correctness = distanceKm < 50 ? GuessCorrectness.CORRECT : GuessCorrectness.INCORRECT;
+    const response: GuessResponse = {
+      correctness,
+      correctCoordinates: {
+        latitude: landmark.props.coordinates.latitude,
+        longitude: landmark.props.coordinates.longitude,
       },
-    });
+      distanceKm,
+      wikiData,
+    };
+    res.json(response);
   } catch (err: any) {
-    console.error("Wikipedia API error:", err.message);
-    if (err.response) {
-      console.error("Status:", err.response.status);
-      console.error("Headers:", err.response.headers);
-      console.error("Data:", err.response.data);
-    }
     res.status(500).json({ error: "Failed to fetch Wikipedia data" });
   }
 });

@@ -1,26 +1,29 @@
-import { Landmark } from "../types";
+import { Landmark } from "../types/geographic";
 
 const LANDMARKS: Record<string, Landmark> = {
   eiffel: {
     id: "eiffel",
-    name: "Eiffel Tower",
-    image: "/images/eiffel.jpg",
-    coords: { lat: 48.8584, lng: 2.2945 },
-    wikiTitle: "Eiffel_Tower",
+    props: {
+      name: "Eiffel Tower",
+      coordinates: { latitude: 48.8584, longitude: 2.2945 },
+      wikiUrl: "https://en.wikipedia.org/api/rest_v1/page/summary/Eiffel_Tower",
+    },
   },
   taj: {
     id: "taj",
-    name: "Taj Mahal",
-    image: "/images/taj.jpg",
-    coords: { lat: 27.1751, lng: 78.0421 },
-    wikiTitle: "Taj_Mahal",
+    props: {
+      name: "Taj Mahal",
+      coordinates: { latitude: 27.1751, longitude: 78.0421 },
+      wikiUrl: "https://en.wikipedia.org/api/rest_v1/page/summary/Taj_Mahal",
+    },
   },
   statueOfLiberty: {
     id: "statueOfLiberty",
-    name: "Statue of Liberty",
-    image: "/images/statue_of_liberty.jpg",
-    coords: { lat: 40.6892, lng: -74.0445 },
-    wikiTitle: "Statue_of_Liberty",
+    props: {
+      name: "Statue of Liberty",
+      coordinates: { latitude: 40.6892, longitude: -74.0445 },
+      wikiUrl: "https://en.wikipedia.org/api/rest_v1/page/summary/Statue_of_Liberty",
+    },
   },
 };
 
