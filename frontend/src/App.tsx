@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-mapboxgl.accessToken = import.meta.env.VITE_MBX_TOKEN || "";
+mapboxgl.accessToken =
+  (import.meta.env.VITE_MBX_TOKEN as string | undefined) || "";
 
 export default function App() {
   const mapContainer = useRef<HTMLDivElement | null>(null);

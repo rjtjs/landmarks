@@ -45,7 +45,7 @@ router.post("/guess", async (req: Request, res: Response) => {
       wikiData,
     };
     res.json(response);
-  } catch (err: any) {
+  } catch {
     res.status(500).json({ error: "Failed to fetch Wikipedia data" });
   }
 });
