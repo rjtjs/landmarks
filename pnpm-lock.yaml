@@ -6,7 +6,26 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.1
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      eslint-config-prettier:
+        specifier: ^10.1.8
+        version: 10.1.8(eslint@9.39.1)
+      prettier:
+        specifier: ^3.7.3
+        version: 3.7.4
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.0.14
+        version: 4.0.15(@types/node@24.10.1)
 
   backend:
     dependencies:
@@ -26,9 +45,6 @@ importers:
       '@types/express':
         specifier: ^5.0.5
         version: 5.0.6
-      '@types/node':
-        specifier: ^24.10.1
-        version: 24.10.1
       '@types/supertest':
         specifier: ^6.0.3
         version: 6.0.3
@@ -38,33 +54,18 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.48.0
         version: 8.48.1(eslint@9.39.1)(typescript@5.9.3)
-      eslint:
-        specifier: ^9.39.1
-        version: 9.39.1
-      eslint-config-prettier:
-        specifier: ^10.1.8
-        version: 10.1.8(eslint@9.39.1)
       eslint-import-resolver-typescript:
         specifier: ^4.4.4
         version: 4.4.4(eslint-plugin-import@2.32.0)(eslint@9.39.1)
       eslint-plugin-import:
         specifier: ^2.32.0
         version: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1)(typescript@5.9.3))(eslint-import-resolver-typescript@4.4.4)(eslint@9.39.1)
-      prettier:
-        specifier: ^3.7.3
-        version: 3.7.4
       supertest:
         specifier: ^7.1.4
         version: 7.1.4
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-      vitest:
-        specifier: ^4.0.14
-        version: 4.0.15(@types/node@24.10.1)
 
   frontend:
     dependencies:
@@ -84,9 +85,6 @@ importers:
       '@eslint/js':
         specifier: ^9.39.1
         version: 9.39.1
-      '@types/node':
-        specifier: ^24.10.1
-        version: 24.10.1
       '@types/react':
         specifier: ^19.2.5
         version: 19.2.7
@@ -96,9 +94,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^5.1.1
         version: 5.1.1(vite@7.2.6(@types/node@24.10.1))
-      eslint:
-        specifier: ^9.39.1
-        version: 9.39.1
       eslint-plugin-react-hooks:
         specifier: ^7.0.1
         version: 7.0.1(eslint@9.39.1)
@@ -108,9 +103,6 @@ importers:
       globals:
         specifier: ^16.5.0
         version: 16.5.0
-      typescript:
-        specifier: ~5.9.3
-        version: 5.9.3
       typescript-eslint:
         specifier: ^8.46.4
         version: 8.48.1(eslint@9.39.1)(typescript@5.9.3)
