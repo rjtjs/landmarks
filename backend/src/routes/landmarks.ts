@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
+import type { Guess } from "@landmarks/shared";
 import { getLandmarkById, getRandomLandmark } from "../data/examples";
-import { GuessRequest } from "../types/requests";
 import { GuessCorrectness, GuessResponse, WikiData } from "../types/responses";
 import { haversineDistance } from "../utils/geographic";
 import { getWikiSummary } from "../utils/landmark";
@@ -13,7 +13,7 @@ router.get("/random", (_req: Request, res: Response) => {
 });
 
 router.post("/guess", async (req: Request, res: Response) => {
-  const { landmarkId, coordinates } = req.body as GuessRequest;
+  const { landmarkId, coordinates } = req.body as Guess;
 
   const landmark = getLandmarkById(landmarkId);
   if (!landmark) {

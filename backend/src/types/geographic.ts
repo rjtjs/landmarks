@@ -1,7 +1,4 @@
-export interface Coordinates {
-  latitude: number;
-  longitude: number;
-}
+import type { Coordinates } from "@landmarks/shared";
 
 export interface LandmarkProps {
   name: string;

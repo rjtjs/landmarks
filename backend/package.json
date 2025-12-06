@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@landmarks/shared": "workspace:*",
     "axios": "^1.13.2",
     "cors": "^2.8.5",
     "express": "^5.1.0"

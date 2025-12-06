@@ -40,6 +40,9 @@ importers:
 
   backend:
     dependencies:
+      "@landmarks/shared":
+        specifier: workspace:*
+        version: link:../shared
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -68,6 +71,9 @@ importers:
 
   frontend:
     dependencies:
+      "@landmarks/shared":
+        specifier: workspace:*
+        version: link:../shared
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -102,6 +108,8 @@ importers:
       vite:
         specifier: ^7.2.4
         version: 7.2.6(@types/node@24.10.1)(yaml@2.8.2)
+
+  shared: {}
 
 packages:
   "@babel/code-frame@7.27.1":

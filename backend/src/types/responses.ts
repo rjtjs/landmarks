@@ -1,4 +1,4 @@
-import { Coordinates } from "./geographic";
+import type { Coordinates } from "@landmarks/shared";
 
 export enum GuessCorrectness {
   INCORRECT = "incorrect",

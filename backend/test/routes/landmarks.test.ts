@@ -3,9 +3,9 @@ import express from "express";
 import { Server } from "http";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import type { Guess } from "@landmarks/shared";
 import errorHandler from "../../src/middleware/errors";
 import router from "../../src/routes/index";
-import { GuessRequest } from "../../src/types/requests";
 import { GuessResponse } from "../../src/types/responses";
 
 const app = express();
@@ -34,7 +34,7 @@ describe("Landmark routes", () => {
   });
 
   it("POST /api/landmarks/guess returns distance and wiki info", async () => {
-    const guessPayload: GuessRequest = {
+    const guessPayload: Guess = {
       landmarkId: "eiffel",
       coordinates: { latitude: 48.8584, longitude: 2.2945 },
     };
