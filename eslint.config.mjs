@@ -1,14 +1,15 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
-import { defineConfig, globalIgnores } from "eslint/config";
 
-export default defineConfig([
-  globalIgnores(["**/dist", "**/node_modules", "**/build"]),
+export default tseslint.config(
   {
-    files: ["**/*.{ts,tsx,js,jsx}"],
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    ignores: ["**/dist", "**/node_modules", "**/build"],
+  },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  {
     languageOptions: {
-      ecmaVersion: 2020,
+      ecmaVersion: 2022,
     },
     rules: {
       "@typescript-eslint/no-unused-vars": [
@@ -20,4 +21,4 @@ export default defineConfig([
       ],
     },
   },
-]);
+);

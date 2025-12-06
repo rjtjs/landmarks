@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
+    "types": ["node", "vitest/globals", "vitest/importMeta"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "rootDir": ".",
