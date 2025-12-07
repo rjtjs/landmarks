@@ -4,5 +4,14 @@ export type {
   GuessResult,
   Landmark,
   LandmarkWithoutLocation,
+  CorrectnessLevel as CorrectnessLevelType,
 } from "./types";
-export { CorrectnessLevel } from "./types";
+export {
+  CorrectnessLevel,
+  CorrectnessLevelEnum,
+  LngLatSchema,
+  GuessSchema,
+  GuessResultSchema,
+  LandmarkSchema,
+  LandmarkWithoutLocationSchema,
+} from "./types";

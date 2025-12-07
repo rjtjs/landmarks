@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import {
   CorrectnessLevel,
-  type Guess,
+  GuessSchema,
   type GuessResult,
   type LandmarkWithoutLocation,
 } from "@landmarks/shared";
@@ -21,7 +21,15 @@ router.get("/random", (_req: Request, res: Response) => {
 });
 
 router.post("/guess", async (req: Request, res: Response) => {
-  const { landmarkId, location } = req.body as Guess;
+  const validation = GuessSchema.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({
+      error: "Invalid request body",
+      details: validation.error.errors,
+    });
+  }
+
+  const { landmarkId, location } = validation.data;
 
   const landmark = getLandmarkById(landmarkId);
   if (!landmark) {
