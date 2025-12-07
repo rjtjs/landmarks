@@ -3,6 +3,7 @@ import express from "express";
 import { Server } from "http";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { PrecisionLevel } from "@landmarks/shared";
 import errorHandler from "../../src/middleware/errors";
 import router from "../../src/routes/index";
 
@@ -28,7 +29,7 @@ describe("Landmark validation", () => {
   it("rejects guess with missing landmarkId", async () => {
     const res = await request(server)
       .post("/api/landmarks/guess")
-      .send({ location: { lng: 0, lat: 0 } });
+      .send({ location: { lng: 0, lat: 0 }, precision: PrecisionLevel.VAGUE });
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("error");
@@ -45,7 +46,7 @@ describe("Landmark validation", () => {
   it("handles missing location gracefully", async () => {
     const res = await request(server)
       .post("/api/landmarks/guess")
-      .send({ landmarkId: "eiffel" });
+      .send({ landmarkId: "eiffel", precision: PrecisionLevel.VAGUE });
 
     expect([400, 500]).toContain(res.status);
   });
@@ -56,10 +57,14 @@ describe("Landmark validation", () => {
     for (const id of landmarkIds) {
       const res = await request(server)
         .post("/api/landmarks/guess")
-        .send({ landmarkId: id, location: { lng: 0, lat: 0 } });
+        .send({
+          landmarkId: id,
+          location: { lng: 0, lat: 0 },
+          precision: PrecisionLevel.VAGUE,
+        });
 
       expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty("correctness");
+      expect(res.body).toHaveProperty("isCorrect");
       expect(res.body).toHaveProperty("distanceKm");
     }
   });
@@ -67,7 +72,11 @@ describe("Landmark validation", () => {
   it("handles extreme coordinate values", async () => {
     const res = await request(server)
       .post("/api/landmarks/guess")
-      .send({ landmarkId: "eiffel", location: { lng: 180, lat: 90 } });
+      .send({
+        landmarkId: "eiffel",
+        location: { lng: 180, lat: 90 },
+        precision: PrecisionLevel.VAGUE,
+      });
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("distanceKm");
@@ -77,7 +86,11 @@ describe("Landmark validation", () => {
   it("rejects invalid longitude (> 180)", async () => {
     const res = await request(server)
       .post("/api/landmarks/guess")
-      .send({ landmarkId: "eiffel", location: { lng: 181, lat: 0 } });
+      .send({
+        landmarkId: "eiffel",
+        location: { lng: 181, lat: 0 },
+        precision: PrecisionLevel.VAGUE,
+      });
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Invalid request body");
@@ -86,7 +99,11 @@ describe("Landmark validation", () => {
   it("rejects invalid longitude (< -180)", async () => {
     const res = await request(server)
       .post("/api/landmarks/guess")
-      .send({ landmarkId: "eiffel", location: { lng: -181, lat: 0 } });
+      .send({
+        landmarkId: "eiffel",
+        location: { lng: -181, lat: 0 },
+        precision: PrecisionLevel.VAGUE,
+      });
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Invalid request body");
@@ -95,7 +112,11 @@ describe("Landmark validation", () => {
   it("rejects invalid latitude (> 90)", async () => {
     const res = await request(server)
       .post("/api/landmarks/guess")
-      .send({ landmarkId: "eiffel", location: { lng: 0, lat: 91 } });
+      .send({
+        landmarkId: "eiffel",
+        location: { lng: 0, lat: 91 },
+        precision: PrecisionLevel.VAGUE,
+      });
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Invalid request body");
@@ -104,7 +125,11 @@ describe("Landmark validation", () => {
   it("rejects invalid latitude (< -90)", async () => {
     const res = await request(server)
       .post("/api/landmarks/guess")
-      .send({ landmarkId: "eiffel", location: { lng: 0, lat: -91 } });
+      .send({
+        landmarkId: "eiffel",
+        location: { lng: 0, lat: -91 },
+        precision: PrecisionLevel.VAGUE,
+      });
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Invalid request body");
@@ -116,6 +141,7 @@ describe("Landmark validation", () => {
       .send({
         landmarkId: "eiffel",
         location: { lng: "invalid", lat: "invalid" },
+        precision: PrecisionLevel.VAGUE,
       });
 
     expect(res.status).toBe(400);
@@ -125,7 +151,11 @@ describe("Landmark validation", () => {
   it("rejects empty landmarkId", async () => {
     const res = await request(server)
       .post("/api/landmarks/guess")
-      .send({ landmarkId: "", location: { lng: 0, lat: 0 } });
+      .send({
+        landmarkId: "",
+        location: { lng: 0, lat: 0 },
+        precision: PrecisionLevel.VAGUE,
+      });
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Invalid request body");

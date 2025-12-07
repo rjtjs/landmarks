@@ -16,8 +16,12 @@ import {
 vi.mock("mapbox-gl", () => ({
   default: {
     accessToken: "",
-    Map: vi.fn(() => mockMap),
-    Marker: vi.fn(() => mockMarker),
+    Map: vi.fn(function Map() {
+      return mockMap;
+    }),
+    Marker: vi.fn(function Marker() {
+      return mockMarker;
+    }),
   },
 }));
 

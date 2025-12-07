@@ -83,8 +83,11 @@ export default function Map({
     if (!map.current || !guessLocation || !mapLoaded.current) return;
 
     const mapInstance = map.current;
-    const markerColor = getMarkerColor(achievedPrecision);
-    const circleColors = getGuessCircleColors(achievedPrecision);
+    const markerColor = getMarkerColor(achievedPrecision, !!actualLocation);
+    const circleColors = getGuessCircleColors(
+      achievedPrecision,
+      !!actualLocation,
+    );
 
     if (guessMarker.current) {
       guessMarker.current.remove();

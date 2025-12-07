@@ -10,9 +10,12 @@ function getCSSVariable(name: string, fallback: string): string {
 
 export function getMarkerColor(
   achievedPrecision: PrecisionLevelType | null,
+  hasActualLocation: boolean = false,
 ): string {
   if (achievedPrecision === null) {
-    return "red";
+    return hasActualLocation
+      ? "red"
+      : getCSSVariable("--marker-guess", "#808080");
   }
 
   switch (achievedPrecision) {
@@ -29,14 +32,21 @@ export function getMarkerColor(
 
 export function getGuessCircleColors(
   achievedPrecision: PrecisionLevelType | null,
+  hasActualLocation: boolean = false,
 ): { fill: string; border: string } {
   if (achievedPrecision === null) {
+    if (hasActualLocation) {
+      return {
+        fill: getCSSVariable("--circle-incorrect", "rgba(239, 68, 68, 0.05)"),
+        border: getCSSVariable(
+          "--circle-incorrect-border",
+          "rgba(239, 68, 68, 0.5)",
+        ),
+      };
+    }
     return {
-      fill: getCSSVariable("--circle-incorrect", "rgba(239, 68, 68, 0.05)"),
-      border: getCSSVariable(
-        "--circle-incorrect-border",
-        "rgba(239, 68, 68, 0.5)",
-      ),
+      fill: getCSSVariable("--circle-guess", "rgba(107, 114, 128, 0.1)"),
+      border: getCSSVariable("--circle-guess-border", "#6b7280"),
     };
   }
 
