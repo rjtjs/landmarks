@@ -1,57 +1,47 @@
 .container {
   margin-top: 0;
-  padding: 1.25rem;
-  border: 2px solid var(--border-color-strong);
-  background: linear-gradient(
-    to bottom,
-    var(--bg-primary),
-    var(--bg-secondary)
-  );
+  padding: 1.5rem;
   border-radius: 0.75rem;
   box-shadow: var(--shadow-sm);
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.correct {
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 2px solid rgba(16, 185, 129, 0.3);
+}
+
+.close {
+  background-color: rgba(245, 158, 11, 0.1);
+  border: 2px solid rgba(245, 158, 11, 0.3);
+}
+
+.incorrect {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 2px solid rgba(239, 68, 68, 0.3);
 }
 
 .title {
-  font-size: 1.375rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.5rem 0;
   color: var(--text-primary);
 }
 
-.infoRow {
-  margin-bottom: 0.875rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border-color);
-  font-size: 0.9375rem;
-}
-
-.infoRow:last-of-type {
-  border-bottom: none;
-}
-
-.label {
-  font-weight: 700;
-  margin-right: 0.5rem;
-  color: var(--text-label);
-}
-
-.aboutSection {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-}
-
-.aboutTitle {
-  font-size: 1.125rem;
-  font-weight: 700;
-  margin: 0 0 0.75rem 0;
-  color: var(--text-primary);
+.correctnessText {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1.25rem 0;
+  color: var(--text-secondary);
 }
 
 .summary {
   line-height: 1.7;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   color: var(--text-secondary);
   font-size: 0.9375rem;
+  text-align: left;
 }
 
 .link {
@@ -61,6 +51,7 @@
   transition: color 0.2s;
   display: inline-block;
   border-bottom: 1px solid transparent;
+  margin-bottom: 1.5rem;
 }
 
 .link:hover {
@@ -68,38 +59,35 @@
   border-bottom-color: var(--link-hover);
 }
 
-.playAgainButton {
-  margin-top: 1.5rem;
+.button {
+  margin-top: 1rem;
   padding: 0.875rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  background-color: var(--button-success);
+  background-color: var(--button-primary);
   color: white;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
   width: 100%;
+  max-width: 300px;
   transition: all 0.2s;
   box-shadow: var(--shadow-sm);
 }
 
-.playAgainButton:hover {
-  background-color: var(--button-success-hover);
+.button:hover {
+  background-color: var(--button-primary-hover);
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
-.playAgainButton:active {
+.button:active {
   transform: translateY(0);
 }
 
 @media (min-width: 640px) {
   .container {
-    padding: 1.5rem;
-  }
-
-  .infoRow {
-    font-size: 1rem;
+    padding: 2rem;
   }
 
   .summary {
@@ -109,25 +97,19 @@
 
 @media (min-width: 768px) {
   .container {
-    padding: 2rem;
+    padding: 2.5rem;
   }
 
   .title {
-    font-size: 1.75rem;
+    font-size: 1.875rem;
   }
 
-  .aboutTitle {
-    font-size: 1.25rem;
+  .correctnessText {
+    font-size: 1.125rem;
   }
 
-  .playAgainButton {
+  .button {
     width: auto;
     min-width: 200px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding: 2.5rem;
   }
 }

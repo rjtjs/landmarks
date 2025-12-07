@@ -79,7 +79,7 @@ export default function App() {
   if (loading && !landmark) {
     return (
       <div className={styles.loadingContainer}>
-        <h1 className={styles.title}>Landmarks Guessing Game</h1>
+        <h1 className={styles.title}>Where in the World?</h1>
         <p>Loading...</p>
       </div>
     );
@@ -88,12 +88,12 @@ export default function App() {
   if (error && !landmark) {
     return (
       <div className={styles.loadingContainer}>
-        <h1 className={styles.title}>Landmarks Guessing Game</h1>
+        <h1 className={styles.title}>Where in the World?</h1>
         <div className={styles.error}>
           <p>Error: {error}</p>
           <p>Make sure the backend is running on port 3000</p>
         </div>
-        <button className={styles.retryButton} onClick={loadLandmark}>
+        <button className={styles.button} onClick={loadLandmark}>
           Retry
         </button>
       </div>
@@ -103,7 +103,7 @@ export default function App() {
   if (!landmark) {
     return (
       <div className={styles.loadingContainer}>
-        <h1 className={styles.title}>Landmarks Guessing Game</h1>
+        <h1 className={styles.title}>Where in the World?</h1>
         <p>No landmark loaded</p>
       </div>
     );
@@ -112,7 +112,7 @@ export default function App() {
   return (
     <div className={styles.container}>
       <ThemeToggle />
-      <h1 className={styles.title}>Landmarks Guessing Game</h1>
+      <h1 className={styles.title}>Where in the World?</h1>
 
       {landmark && (
         <LandmarkImages images={landmark.images} name={landmark.name} />
@@ -130,7 +130,7 @@ export default function App() {
         <button
           onClick={handleSubmitGuess}
           disabled={loading}
-          className={styles.submitButton}
+          className={styles.button}
         >
           {loading ? "Submitting..." : "Submit Guess"}
         </button>

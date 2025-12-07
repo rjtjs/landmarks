@@ -12,47 +12,37 @@ export default function ResultDisplay({
   landmarkName,
   onPlayAgain,
 }: ResultDisplayProps) {
-  const getCorrectnessText = (correctness: string) => {
+  const getCorrectnessClass = (correctness: string) => {
     switch (correctness) {
       case CorrectnessLevel.CORRECT:
-        return "Correct!";
+        return styles.correct;
       case CorrectnessLevel.CLOSE:
-        return "Close!";
+        return styles.close;
       case CorrectnessLevel.INCORRECT:
-        return "Incorrect";
+        return styles.incorrect;
       default:
-        return "Unknown";
+        return "";
     }
   };
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>Result</h2>
-      <div className={styles.infoRow}>
-        <span className={styles.label}>Correctness:</span>
-        {getCorrectnessText(result.correctness)}
-      </div>
-      <div className={styles.infoRow}>
-        <span className={styles.label}>Distance:</span>
-        {result.distanceKm.toFixed(2)} km
-      </div>
-      <div className={styles.infoRow}>
-        <span className={styles.label}>Location:</span>
-        {landmarkName}
-      </div>
-      <div className={styles.aboutSection}>
-        <h3 className={styles.aboutTitle}>About</h3>
-        <p className={styles.summary}>{result.wikiSummary}</p>
-        <a
-          href={result.wikiUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.link}
-        >
-          Read more
-        </a>
-      </div>
-      <button onClick={onPlayAgain} className={styles.playAgainButton}>
+    <div
+      className={`${styles.container} ${getCorrectnessClass(result.correctness)}`}
+    >
+      <h2 className={styles.title}>{landmarkName}</h2>
+      <p className={styles.correctnessText}>
+        {result.distanceKm.toFixed(0)} km away
+      </p>
+      <p className={styles.summary}>{result.wikiSummary}</p>
+      <a
+        href={result.wikiUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.link}
+      >
+        Read more
+      </a>
+      <button onClick={onPlayAgain} className={styles.button}>
         Play Again
       </button>
     </div>
