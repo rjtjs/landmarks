@@ -126,11 +126,32 @@ export default function App() {
   }
 
   if (loading && !landmark) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{ padding: "20px" }}>
+        <h1>Landmarks Guessing Game</h1>
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   if (error && !landmark) {
-    return <div>Error: {error}</div>;
+    return (
+      <div style={{ padding: "20px" }}>
+        <h1>Landmarks Guessing Game</h1>
+        <p style={{ color: "red" }}>Error: {error}</p>
+        <p>Make sure the backend is running on port 3000</p>
+        <button onClick={loadLandmark}>Retry</button>
+      </div>
+    );
+  }
+
+  if (!landmark) {
+    return (
+      <div style={{ padding: "20px" }}>
+        <h1>Landmarks Guessing Game</h1>
+        <p>No landmark loaded</p>
+      </div>
+    );
   }
 
   return (
