@@ -1,9 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import userEvent from "@testing-library/user-event";
 import App from "../src/App";
+import * as api from "../src/services/api";
 
 const mockMap = {
   on: vi.fn(),
+  off: vi.fn(),
   remove: vi.fn(),
   getCanvas: vi.fn(() => document.createElement("canvas")),
 };
@@ -26,50 +29,81 @@ vi.mock("mapbox-gl", () => ({
   },
 }));
 
+vi.mock("../src/services/api");
+
 describe("App", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-  });
-
-  it("renders the app with heading", () => {
-    render(<App />);
-    expect(
-      screen.getByText("Click on the map to place a marker"),
-    ).toBeInTheDocument();
-  });
-
-  it("renders map container", () => {
-    const { container } = render(<App />);
-    const mapContainer = container.querySelector('[style*="height: 400px"]');
-    expect(mapContainer).toBeInTheDocument();
-  });
-
-  it("initializes mapbox map on mount", async () => {
-    const mapboxgl = await import("mapbox-gl");
-    render(<App />);
-
-    await waitFor(() => {
-      expect(mapboxgl.default.Map).toHaveBeenCalledWith(
-        expect.objectContaining({
-          style: "mapbox://styles/mapbox/streets-v12",
-          center: [0, 20],
-          zoom: 1.5,
-        }),
-      );
+    vi.mocked(api.getRandomLandmark).mockResolvedValue({
+      id: "test-landmark",
+      name: "Test Landmark",
+      detailsUrl: "https://example.com",
+      images: [
+        "https://example.com/image1.jpg",
+        "https://example.com/image2.jpg",
+      ],
     });
   });
 
-  it("registers click event handler on map", async () => {
+  it("renders the app with heading", async () => {
+    render(<App />);
+    expect(screen.getByText("Landmarks Guessing Game")).toBeInTheDocument();
+  });
+
+  it("loads and displays landmark images", async () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(mockMap.on).toHaveBeenCalledWith("click", expect.any(Function));
+      expect(screen.getByText("Where is this landmark?")).toBeInTheDocument();
+    });
+
+    const images = screen.getAllByRole("img");
+    expect(images).toHaveLength(2);
+    expect(images[0]).toHaveAttribute("src", "https://example.com/image1.jpg");
+    expect(images[1]).toHaveAttribute("src", "https://example.com/image2.jpg");
+  });
+
+  it("displays loading state initially", () => {
+    render(<App />);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+  });
+
+  it("displays error state when landmark fails to load", async () => {
+    vi.mocked(api.getRandomLandmark).mockRejectedValue(new Error("Failed"));
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Failed to load landmark/)).toBeInTheDocument();
     });
   });
 
-  it("creates marker when map is clicked", async () => {
-    const mapboxgl = await import("mapbox-gl");
+  it("shows submit button when guess location is selected", async () => {
     render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Where is this landmark?")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText("Submit Guess")).not.toBeInTheDocument();
+  });
+
+  it("submits guess and displays result", async () => {
+    const user = userEvent.setup();
+
+    vi.mocked(api.submitGuess).mockResolvedValue({
+      correctness: "CORRECT",
+      actualLocation: { lng: 2.2945, lat: 48.8584 },
+      distanceKm: 0.5,
+      wikiSummary: "Test summary",
+      wikiUrl: "https://example.com/wiki",
+    });
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Where is this landmark?")).toBeInTheDocument();
+    });
 
     await waitFor(() => {
       expect(mockMap.on).toHaveBeenCalledWith("click", expect.any(Function));
@@ -78,46 +112,65 @@ describe("App", () => {
     const clickHandler = mockMap.on.mock.calls.find(
       (call) => call[0] === "click",
     )?.[1];
-    expect(clickHandler).toBeDefined();
 
-    const mockEvent = {
-      lngLat: { lng: 2.2945, lat: 48.8584 },
-    };
-
-    clickHandler(mockEvent);
+    clickHandler({ lngLat: { lng: 2.2945, lat: 48.8584 } });
 
     await waitFor(() => {
-      expect(mapboxgl.default.Marker).toHaveBeenCalledWith({ color: "red" });
-      expect(mockMarker.setLngLat).toHaveBeenCalledWith(mockEvent.lngLat);
-      expect(mockMarker.addTo).toHaveBeenCalledWith(mockMap);
+      expect(screen.getByText("Submit Guess")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Submit Guess"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Result")).toBeInTheDocument();
+      expect(screen.getByText("Correct!")).toBeInTheDocument();
+      expect(screen.getByText(/0.50 km/)).toBeInTheDocument();
     });
   });
 
-  it("updates existing marker position on subsequent clicks", async () => {
+  it("allows playing again after submitting guess", async () => {
+    const user = userEvent.setup();
+
+    vi.mocked(api.submitGuess).mockResolvedValue({
+      correctness: "INCORRECT",
+      actualLocation: { lng: 2.2945, lat: 48.8584 },
+      distanceKm: 1500,
+      wikiSummary: "Test summary",
+      wikiUrl: "https://example.com/wiki",
+    });
+
     render(<App />);
 
     await waitFor(() => {
-      expect(mockMap.on).toHaveBeenCalledWith("click", expect.any(Function));
+      expect(screen.getByText("Where is this landmark?")).toBeInTheDocument();
     });
 
     const clickHandler = mockMap.on.mock.calls.find(
       (call) => call[0] === "click",
     )?.[1];
-
-    const firstClick = { lngLat: { lng: 2.2945, lat: 48.8584 } };
-    clickHandler(firstClick);
+    clickHandler({ lngLat: { lng: 0, lat: 0 } });
 
     await waitFor(() => {
-      expect(mockMarker.setLngLat).toHaveBeenCalledWith(firstClick.lngLat);
+      expect(screen.getByText("Submit Guess")).toBeInTheDocument();
     });
 
-    vi.clearAllMocks();
-
-    const secondClick = { lngLat: { lng: -0.1278, lat: 51.5074 } };
-    clickHandler(secondClick);
+    await user.click(screen.getByText("Submit Guess"));
 
     await waitFor(() => {
-      expect(mockMarker.setLngLat).toHaveBeenCalledWith(secondClick.lngLat);
+      expect(screen.getByText("Play Again")).toBeInTheDocument();
+    });
+
+    vi.mocked(api.getRandomLandmark).mockResolvedValue({
+      id: "new-landmark",
+      name: "New Landmark",
+      detailsUrl: "https://example.com",
+      images: ["https://example.com/new-image.jpg"],
+    });
+
+    await user.click(screen.getByText("Play Again"));
+
+    await waitFor(() => {
+      expect(api.getRandomLandmark).toHaveBeenCalledTimes(2);
     });
   });
 });
