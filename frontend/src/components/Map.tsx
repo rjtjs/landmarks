@@ -2,6 +2,17 @@ import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import type { LngLat } from "@landmarks/shared";
+import {
+  getMarkerColor,
+  getGuessCircleColors,
+  getActualLocationCircleColors,
+} from "../utils/mapStyles";
+import {
+  addGuessCircle,
+  addActualLocationCircles,
+  cleanupGuessCircle,
+  cleanupActualLocationCircles,
+} from "../utils/mapLayers";
 import styles from "./Map.module.css";
 
 interface MapProps {
@@ -23,6 +34,7 @@ export default function Map({
   const map = useRef<mapboxgl.Map | null>(null);
   const guessMarker = useRef<mapboxgl.Marker | null>(null);
   const actualMarker = useRef<mapboxgl.Marker | null>(null);
+  const mapLoaded = useRef(false);
 
   useEffect(() => {
     if (map.current || !mapContainer.current) return;
@@ -37,10 +49,15 @@ export default function Map({
       zoom: 1.5,
     });
 
+    map.current.on("load", () => {
+      mapLoaded.current = true;
+    });
+
     return () => {
       if (map.current) {
         map.current.remove();
         map.current = null;
+        mapLoaded.current = false;
       }
     };
   }, []);
@@ -61,40 +78,63 @@ export default function Map({
   }, [disabled, onLocationSelect]);
 
   useEffect(() => {
-    if (!map.current || !guessLocation) return;
+    if (!map.current || !guessLocation || !mapLoaded.current) return;
+
+    const mapInstance = map.current;
+    const markerColor = getMarkerColor(!!actualLocation, correctnessColor);
+    const circleColors = getGuessCircleColors(!!actualLocation, markerColor);
 
     if (guessMarker.current) {
       guessMarker.current.remove();
     }
 
-    guessMarker.current = new mapboxgl.Marker({ color: correctnessColor })
+    addGuessCircle(
+      mapInstance,
+      guessLocation,
+      circleColors.fill,
+      circleColors.border,
+    );
+
+    guessMarker.current = new mapboxgl.Marker({ color: markerColor })
       .setLngLat(guessLocation)
-      .addTo(map.current);
+      .addTo(mapInstance);
 
     return () => {
       if (guessMarker.current) {
         guessMarker.current.remove();
         guessMarker.current = null;
       }
+      cleanupGuessCircle(mapInstance);
     };
-  }, [guessLocation, correctnessColor]);
+  }, [guessLocation, correctnessColor, actualLocation]);
 
   useEffect(() => {
-    if (!map.current || !actualLocation) return;
+    if (!map.current || !actualLocation || !mapLoaded.current) return;
+
+    const mapInstance = map.current;
+    const circleColors = getActualLocationCircleColors();
 
     if (actualMarker.current) {
       actualMarker.current.remove();
     }
 
+    addActualLocationCircles(
+      mapInstance,
+      actualLocation,
+      circleColors.close,
+      circleColors.correct,
+    );
+
     actualMarker.current = new mapboxgl.Marker({ color: "green" })
       .setLngLat(actualLocation)
-      .addTo(map.current);
+      .addTo(mapInstance);
 
     return () => {
       if (actualMarker.current) {
         actualMarker.current.remove();
         actualMarker.current = null;
       }
+      cleanupActualLocationCircles(mapInstance);
     };
   }, [actualLocation]);
 

@@ -5,11 +5,24 @@ import App from "../src/App";
 import * as api from "../src/services/api";
 import * as localStorageUtils from "../src/utils/localStorage";
 
+type MapEventHandler = (event?: {
+  lngLat: { lng: number; lat: number };
+}) => void;
+
 const mockMap = {
-  on: vi.fn(),
+  on: vi.fn((event: string, handler: MapEventHandler) => {
+    if (event === "load") {
+      setTimeout(() => handler(), 0);
+    }
+  }),
   off: vi.fn(),
   remove: vi.fn(),
   getCanvas: vi.fn(() => document.createElement("canvas")),
+  getSource: vi.fn(() => null),
+  addSource: vi.fn(),
+  removeSource: vi.fn(),
+  addLayer: vi.fn(),
+  removeLayer: vi.fn(),
 };
 
 const mockMarker = {
@@ -122,7 +135,8 @@ describe("App", () => {
       (call) => call[0] === "click",
     )?.[1];
 
-    clickHandler({ lngLat: { lng: 2.2945, lat: 48.8584 } });
+    expect(clickHandler).toBeDefined();
+    clickHandler!({ lngLat: { lng: 2.2945, lat: 48.8584 } });
 
     await waitFor(() => {
       expect(screen.getByText("Submit Guess")).toBeInTheDocument();
@@ -192,7 +206,8 @@ describe("App", () => {
     const clickHandler = mockMap.on.mock.calls.find(
       (call) => call[0] === "click",
     )?.[1];
-    clickHandler({ lngLat: { lng: 2, lat: 48 } });
+    expect(clickHandler).toBeDefined();
+    clickHandler!({ lngLat: { lng: 2, lat: 48 } });
 
     await waitFor(() => {
       expect(screen.getByText("Submit Guess")).toBeInTheDocument();
@@ -226,7 +241,8 @@ describe("App", () => {
     const clickHandler = mockMap.on.mock.calls.find(
       (call) => call[0] === "click",
     )?.[1];
-    clickHandler({ lngLat: { lng: 0, lat: 0 } });
+    expect(clickHandler).toBeDefined();
+    clickHandler!({ lngLat: { lng: 0, lat: 0 } });
 
     await waitFor(() => {
       expect(screen.getByText("Submit Guess")).toBeInTheDocument();
@@ -324,7 +340,8 @@ describe("App", () => {
       const clickHandler = mockMap.on.mock.calls.find(
         (call) => call[0] === "click",
       )?.[1];
-      clickHandler({ lngLat: { lng: 2.2945, lat: 48.8584 } });
+      expect(clickHandler).toBeDefined();
+      clickHandler!({ lngLat: { lng: 2.2945, lat: 48.8584 } });
 
       await waitFor(() => {
         expect(setItemSpy).toHaveBeenCalledWith(
@@ -357,7 +374,8 @@ describe("App", () => {
       const clickHandler = mockMap.on.mock.calls.find(
         (call) => call[0] === "click",
       )?.[1];
-      clickHandler({ lngLat: { lng: 2.2945, lat: 48.8584 } });
+      expect(clickHandler).toBeDefined();
+      clickHandler!({ lngLat: { lng: 2.2945, lat: 48.8584 } });
 
       await waitFor(() => {
         expect(screen.getByText("Submit Guess")).toBeInTheDocument();

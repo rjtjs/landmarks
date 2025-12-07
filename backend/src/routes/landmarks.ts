@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import {
   CorrectnessLevel,
   GuessSchema,
+  CORRECTNESS_DISTANCES_KM,
   type GuessResult,
   type LandmarkWithoutLocation,
 } from "@landmarks/shared";
@@ -44,9 +45,9 @@ router.post("/guess", async (req: Request, res: Response) => {
   );
 
   let correctness: CorrectnessLevel;
-  if (distanceKm < 50) {
+  if (distanceKm < CORRECTNESS_DISTANCES_KM.CORRECT) {
     correctness = CorrectnessLevel.CORRECT;
-  } else if (distanceKm < 500) {
+  } else if (distanceKm < CORRECTNESS_DISTANCES_KM.CLOSE) {
     correctness = CorrectnessLevel.CLOSE;
   } else {
     correctness = CorrectnessLevel.INCORRECT;

@@ -5,6 +5,7 @@ import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
   CorrectnessLevel,
+  CORRECTNESS_DISTANCES_KM,
   type Guess,
   type GuessResult,
 } from "@landmarks/shared";
@@ -30,7 +31,7 @@ describe("Landmark correctness levels", () => {
     });
   });
 
-  it("returns CORRECT for distance < 50km", async () => {
+  it(`returns CORRECT for distance < ${CORRECTNESS_DISTANCES_KM.CORRECT}km`, async () => {
     const nearbyLocation = { lng: 2.35, lat: 48.86 };
 
     const guessPayload: Guess = {
@@ -45,11 +46,11 @@ describe("Landmark correctness levels", () => {
 
     const body = res.body as GuessResult;
     expect(body.correctness).toBe(CorrectnessLevel.CORRECT);
-    expect(body.distanceKm).toBeLessThan(50);
+    expect(body.distanceKm).toBeLessThan(CORRECTNESS_DISTANCES_KM.CORRECT);
   });
 
-  it("returns CLOSE for distance between 50km and 500km", async () => {
-    const closeLocation = { lng: 2.5, lat: 50.0 };
+  it(`returns CLOSE for distance between ${CORRECTNESS_DISTANCES_KM.CORRECT}km and ${CORRECTNESS_DISTANCES_KM.CLOSE}km`, async () => {
+    const closeLocation = { lng: 2.9, lat: 49.4 };
 
     const guessPayload: Guess = {
       landmarkId: "eiffel",
@@ -63,11 +64,13 @@ describe("Landmark correctness levels", () => {
 
     const body = res.body as GuessResult;
     expect(body.correctness).toBe(CorrectnessLevel.CLOSE);
-    expect(body.distanceKm).toBeGreaterThanOrEqual(50);
-    expect(body.distanceKm).toBeLessThan(500);
+    expect(body.distanceKm).toBeGreaterThanOrEqual(
+      CORRECTNESS_DISTANCES_KM.CORRECT,
+    );
+    expect(body.distanceKm).toBeLessThan(CORRECTNESS_DISTANCES_KM.CLOSE);
   });
 
-  it("returns INCORRECT for distance >= 500km", async () => {
+  it(`returns INCORRECT for distance >= ${CORRECTNESS_DISTANCES_KM.CLOSE}km`, async () => {
     const farLocation = { lng: -74.0445, lat: 40.6892 };
 
     const guessPayload: Guess = {
@@ -82,7 +85,9 @@ describe("Landmark correctness levels", () => {
 
     const body = res.body as GuessResult;
     expect(body.correctness).toBe(CorrectnessLevel.INCORRECT);
-    expect(body.distanceKm).toBeGreaterThanOrEqual(500);
+    expect(body.distanceKm).toBeGreaterThanOrEqual(
+      CORRECTNESS_DISTANCES_KM.CLOSE,
+    );
   });
 
   it("returns exact location match with zero distance", async () => {

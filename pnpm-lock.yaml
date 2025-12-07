@@ -80,6 +80,12 @@ importers:
       "@landmarks/shared":
         specifier: workspace:*
         version: link:../shared
+      "@turf/circle":
+        specifier: ^7.3.1
+        version: 7.3.1
+      "@turf/helpers":
+        specifier: ^7.3.1
+        version: 7.3.1
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -1286,6 +1292,30 @@ packages:
     resolution:
       {
         integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==,
+      }
+
+  "@turf/circle@7.3.1":
+    resolution:
+      {
+        integrity: sha512-UY2OM1OK7IuyrtN3YE8026ZM3xM9VIkqZ0vRZln8g33D0AogrJVJ/I9T81/VpRPlxTnrbDpzQxJQBH+3vPG/Ow==,
+      }
+
+  "@turf/destination@7.3.1":
+    resolution:
+      {
+        integrity: sha512-yyiJtbQJ4AB9Ny/FKDDNuWI9Sg4Jtd2PMpQPqOV3AFq8NNkg0xJSNmDHDxupb3oPqPWYPxyfVI3tBoF+Xhhoig==,
+      }
+
+  "@turf/helpers@7.3.1":
+    resolution:
+      {
+        integrity: sha512-zkL34JVhi5XhsuMEO0MUTIIFEJ8yiW1InMu4hu/oRqamlY4mMoZql0viEmH6Dafh/p+zOl8OYvMJ3Vm3rFshgg==,
+      }
+
+  "@turf/invariant@7.3.1":
+    resolution:
+      {
+        integrity: sha512-IdZJfDjIDCLH+Gu2yLFoSM7H23sdetIo5t4ET1/25X8gi3GE2XSqbZwaGjuZgNh02nisBewLqNiJs2bo+hrqZA==,
       }
 
   "@types/aria-query@5.0.4":
@@ -3741,6 +3771,12 @@ packages:
       "@swc/wasm":
         optional: true
 
+  tslib@2.8.1:
+    resolution:
+      {
+        integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==,
+      }
+
   tsx@4.21.0:
     resolution:
       {
@@ -4589,6 +4625,31 @@ snapshots:
   "@tsconfig/node14@1.0.3": {}
 
   "@tsconfig/node16@1.0.4": {}
+
+  "@turf/circle@7.3.1":
+    dependencies:
+      "@turf/destination": 7.3.1
+      "@turf/helpers": 7.3.1
+      "@types/geojson": 7946.0.16
+      tslib: 2.8.1
+
+  "@turf/destination@7.3.1":
+    dependencies:
+      "@turf/helpers": 7.3.1
+      "@turf/invariant": 7.3.1
+      "@types/geojson": 7946.0.16
+      tslib: 2.8.1
+
+  "@turf/helpers@7.3.1":
+    dependencies:
+      "@types/geojson": 7946.0.16
+      tslib: 2.8.1
+
+  "@turf/invariant@7.3.1":
+    dependencies:
+      "@turf/helpers": 7.3.1
+      "@types/geojson": 7946.0.16
+      tslib: 2.8.1
 
   "@types/aria-query@5.0.4": {}
 
@@ -6109,6 +6170,8 @@ snapshots:
       typescript: 5.9.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+
+  tslib@2.8.1: {}
 
   tsx@4.21.0:
     dependencies:

@@ -15,3 +15,4 @@ export {
   LandmarkSchema,
   LandmarkWithoutLocationSchema,
 } from "./types";
+export { CORRECTNESS_DISTANCES_KM } from "./config";
