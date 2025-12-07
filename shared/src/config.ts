@@ -1,4 +1,5 @@
-export const CORRECTNESS_DISTANCES_KM = {
-  CORRECT: 50,
-  CLOSE: 100,
+export const PRECISION_RADII_KM = {
+  EXACT: 50,
+  NARROW: 100,
+  VAGUE: 250,
 } as const;

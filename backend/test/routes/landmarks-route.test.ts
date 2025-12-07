@@ -3,7 +3,11 @@ import express from "express";
 import { Server } from "http";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import type { Guess, GuessResult } from "@landmarks/shared";
+import {
+  PrecisionLevel,
+  type Guess,
+  type GuessResult,
+} from "@landmarks/shared";
 import errorHandler from "../../src/middleware/errors";
 import router from "../../src/routes/index";
 
@@ -40,6 +44,7 @@ describe("Landmark routes", () => {
     const guessPayload: Guess = {
       landmarkId: "eiffel",
       location: { lng: 2.2945, lat: 48.8584 },
+      precision: PrecisionLevel.EXACT,
     };
 
     const res = await request(server)
@@ -48,17 +53,23 @@ describe("Landmark routes", () => {
     expect(res.status).toBe(200);
 
     const body = res.body as GuessResult;
-    expect(body).toHaveProperty("correctness");
+    expect(body).toHaveProperty("isCorrect");
+    expect(body).toHaveProperty("achievedPrecision");
     expect(body).toHaveProperty("distanceKm");
     expect(body).toHaveProperty("actualLocation");
     expect(body).toHaveProperty("wikiSummary");
     expect(body).toHaveProperty("wikiUrl");
+    expect(body).toHaveProperty("availablePrecisions");
   });
 
   it("POST /api/landmarks/guess with invalid id returns 400", async () => {
     const res = await request(server)
       .post("/api/landmarks/guess")
-      .send({ landmarkId: "invalid", location: { lng: 0, lat: 0 } });
+      .send({
+        landmarkId: "invalid",
+        location: { lng: 0, lat: 0 },
+        precision: PrecisionLevel.VAGUE,
+      });
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("error");

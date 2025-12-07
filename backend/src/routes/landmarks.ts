@@ -1,10 +1,11 @@
 import { Request, Response, Router } from "express";
 import {
-  CorrectnessLevel,
+  PrecisionLevel,
   GuessSchema,
-  CORRECTNESS_DISTANCES_KM,
+  PRECISION_RADII_KM,
   type GuessResult,
   type LandmarkWithoutLocation,
+  type PrecisionLevelType,
 } from "@landmarks/shared";
 import { getLandmarkById, getRandomLandmark } from "../data/examples";
 import { haversineDistance } from "../utils/geographic";
@@ -30,7 +31,7 @@ router.post("/guess", async (req: Request, res: Response) => {
     });
   }
 
-  const { landmarkId, location } = validation.data;
+  const { landmarkId, location, precision } = validation.data;
 
   const landmark = getLandmarkById(landmarkId);
   if (!landmark) {
@@ -44,23 +45,32 @@ router.post("/guess", async (req: Request, res: Response) => {
     location.lng,
   );
 
-  let correctness: CorrectnessLevel;
-  if (distanceKm < CORRECTNESS_DISTANCES_KM.CORRECT) {
-    correctness = CorrectnessLevel.CORRECT;
-  } else if (distanceKm < CORRECTNESS_DISTANCES_KM.CLOSE) {
-    correctness = CorrectnessLevel.CLOSE;
-  } else {
-    correctness = CorrectnessLevel.INCORRECT;
+  const precisionRadius = PRECISION_RADII_KM[precision];
+  const isCorrect = distanceKm <= precisionRadius;
+
+  const achievedPrecision: PrecisionLevelType | null = isCorrect
+    ? precision
+    : null;
+
+  let availablePrecisions: PrecisionLevelType[] = [];
+  if (isCorrect) {
+    if (precision === PrecisionLevel.VAGUE) {
+      availablePrecisions = [PrecisionLevel.NARROW, PrecisionLevel.EXACT];
+    } else if (precision === PrecisionLevel.NARROW) {
+      availablePrecisions = [PrecisionLevel.EXACT];
+    }
   }
 
   try {
     const wikiSummary = await getWikiSummary(landmark.detailsUrl);
     const response: GuessResult = {
-      correctness,
+      isCorrect,
+      achievedPrecision,
       actualLocation: landmark.location,
       distanceKm,
       wikiSummary: wikiSummary.extract,
       wikiUrl: wikiSummary.content_urls?.desktop?.page || "",
+      availablePrecisions,
     };
     res.json(response);
   } catch {
