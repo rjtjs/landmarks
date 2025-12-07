@@ -9,6 +9,7 @@ import { getRandomLandmark, submitGuess } from "./services/api";
 import Map from "./components/Map";
 import LandmarkImages from "./components/LandmarkImages";
 import ResultDisplay from "./components/ResultDisplay";
+import ThemeToggle from "./components/ThemeToggle";
 import styles from "./App.module.css";
 
 export default function App() {
@@ -110,6 +111,7 @@ export default function App() {
 
   return (
     <div className={styles.container}>
+      <ThemeToggle />
       <h1 className={styles.title}>Landmarks Guessing Game</h1>
 
       {landmark && (

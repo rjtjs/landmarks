@@ -7,7 +7,7 @@
   font-weight: 600;
   margin: 0 0 1rem 0;
   text-align: center;
-  color: #374151;
+  color: var(--text-label);
 }
 
 .imagesContainer {
@@ -22,17 +22,17 @@
   height: auto;
   aspect-ratio: 4/3;
   object-fit: cover;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color);
   border-radius: 0.75rem;
   transition:
     transform 0.2s,
     box-shadow 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .image:hover {
   transform: scale(1.02);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 @media (min-width: 640px) {

@@ -12,9 +12,6 @@ interface MapProps {
   disabled?: boolean;
 }
 
-mapboxgl.accessToken =
-  (import.meta.env.VITE_MBX_TOKEN as string | undefined) || "";
-
 export default function Map({
   onLocationSelect,
   guessLocation,
@@ -29,6 +26,9 @@ export default function Map({
 
   useEffect(() => {
     if (map.current || !mapContainer.current) return;
+
+    mapboxgl.accessToken =
+      (import.meta.env.VITE_MBX_TOKEN as string | undefined) || "";
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
