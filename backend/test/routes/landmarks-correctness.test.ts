@@ -3,7 +3,11 @@ import express from "express";
 import { Server } from "http";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { CorrectnessLevel, type Guess, type GuessResult } from "@landmarks/shared";
+import {
+  CorrectnessLevel,
+  type Guess,
+  type GuessResult,
+} from "@landmarks/shared";
 import errorHandler from "../../src/middleware/errors";
 import router from "../../src/routes/index";
 
@@ -34,7 +38,9 @@ describe("Landmark correctness levels", () => {
       location: nearbyLocation,
     };
 
-    const res = await request(server).post("/api/landmarks/guess").send(guessPayload);
+    const res = await request(server)
+      .post("/api/landmarks/guess")
+      .send(guessPayload);
     expect(res.status).toBe(200);
 
     const body = res.body as GuessResult;
@@ -50,7 +56,9 @@ describe("Landmark correctness levels", () => {
       location: closeLocation,
     };
 
-    const res = await request(server).post("/api/landmarks/guess").send(guessPayload);
+    const res = await request(server)
+      .post("/api/landmarks/guess")
+      .send(guessPayload);
     expect(res.status).toBe(200);
 
     const body = res.body as GuessResult;
@@ -67,7 +75,9 @@ describe("Landmark correctness levels", () => {
       location: farLocation,
     };
 
-    const res = await request(server).post("/api/landmarks/guess").send(guessPayload);
+    const res = await request(server)
+      .post("/api/landmarks/guess")
+      .send(guessPayload);
     expect(res.status).toBe(200);
 
     const body = res.body as GuessResult;
@@ -83,7 +93,9 @@ describe("Landmark correctness levels", () => {
       location: eiffelLocation,
     };
 
-    const res = await request(server).post("/api/landmarks/guess").send(guessPayload);
+    const res = await request(server)
+      .post("/api/landmarks/guess")
+      .send(guessPayload);
     expect(res.status).toBe(200);
 
     const body = res.body as GuessResult;

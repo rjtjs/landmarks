@@ -10,7 +10,12 @@ describe("haversineDistance", () => {
   it("calculates approx distance between Paris and London", () => {
     const paris = { lat: 48.8566, lng: 2.3522 };
     const london = { lat: 51.5074, lng: -0.1278 };
-    const dist = haversineDistance(paris.lat, paris.lng, london.lat, london.lng);
+    const dist = haversineDistance(
+      paris.lat,
+      paris.lng,
+      london.lat,
+      london.lng,
+    );
     expect(dist).toBeGreaterThan(340);
     expect(dist).toBeLessThan(350);
   });

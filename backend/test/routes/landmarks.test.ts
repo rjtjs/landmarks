@@ -40,7 +40,9 @@ describe("Landmark routes", () => {
       location: { lng: 2.2945, lat: 48.8584 },
     };
 
-    const res = await request(server).post("/api/landmarks/guess").send(guessPayload);
+    const res = await request(server)
+      .post("/api/landmarks/guess")
+      .send(guessPayload);
     expect(res.status).toBe(200);
 
     const body = res.body as GuessResult;

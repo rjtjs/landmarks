@@ -41,7 +41,9 @@ describe("Landmark validation", () => {
   });
 
   it("handles missing location gracefully", async () => {
-    const res = await request(server).post("/api/landmarks/guess").send({ landmarkId: "eiffel" });
+    const res = await request(server)
+      .post("/api/landmarks/guess")
+      .send({ landmarkId: "eiffel" });
 
     expect([400, 500]).toContain(res.status);
   });
