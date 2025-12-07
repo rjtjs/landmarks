@@ -44,30 +44,8 @@
   text-decoration: underline;
 }
 
-.precisionText {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem 0;
-  color: var(--text-secondary);
-}
-
-.distanceText {
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin: 0 0 0.75rem 0;
-  color: var(--text-tertiary);
-}
-
-.summary {
-  line-height: 1.7;
-  margin-bottom: 1.25rem;
-  color: var(--text-secondary);
-  font-size: 0.9375rem;
-  text-align: left;
-}
-
 .button {
-  margin-top: 2rem;
+  margin-top: 1rem;
   padding: 0.875rem 2rem;
   font-size: 1rem;
   font-weight: 600;
@@ -96,10 +74,6 @@
   .container {
     padding: 2rem;
   }
-
-  .summary {
-    font-size: 1rem;
-  }
 }
 
 @media (min-width: 768px) {
@@ -109,10 +83,6 @@
 
   .title {
     font-size: 1.875rem;
-  }
-
-  .distanceText {
-    font-size: 1rem;
   }
 
   .button {

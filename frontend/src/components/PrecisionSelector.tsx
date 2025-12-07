@@ -1,4 +1,8 @@
-import { PrecisionLevel, type PrecisionLevelType } from "@landmarks/shared";
+import {
+  PrecisionLevel,
+  PRECISION_POINTS,
+  type PrecisionLevelType,
+} from "@landmarks/shared";
 import styles from "./PrecisionSelector.module.css";
 
 interface PrecisionSelectorProps {
@@ -26,27 +30,30 @@ export default function PrecisionSelector({
 
   return (
     <div className={styles.container}>
-      <label className={styles.label}>Precision Level:</label>
+      <label className={styles.label}>Precision:</label>
       <div className={styles.options}>
-        {allPrecisions.map((precision) => (
-          <label
-            key={precision}
-            className={`${styles.option} ${isDisabled(precision) ? styles.optionDisabled : ""}`}
-          >
-            <input
-              type="radio"
-              name="precision"
-              value={precision}
-              checked={selectedPrecision === precision}
-              onChange={() => onPrecisionChange(precision)}
-              disabled={isDisabled(precision)}
-              className={styles.radio}
-            />
-            <span className={styles.optionLabel}>
-              {precision.charAt(0) + precision.slice(1).toLowerCase()}
-            </span>
-          </label>
-        ))}
+        {allPrecisions.map((precision) => {
+          const points = PRECISION_POINTS[precision];
+          return (
+            <label
+              key={precision}
+              className={`${styles.option} ${isDisabled(precision) ? styles.optionDisabled : ""}`}
+            >
+              <input
+                type="radio"
+                name="precision"
+                value={precision}
+                checked={selectedPrecision === precision}
+                onChange={() => onPrecisionChange(precision)}
+                disabled={isDisabled(precision)}
+                className={styles.radio}
+              />
+              <span className={styles.optionLabel}>
+                {points} {points === 1 ? "point" : "points"}
+              </span>
+            </label>
+          );
+        })}
       </div>
     </div>
   );

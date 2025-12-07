@@ -3,3 +3,9 @@ export const PRECISION_RADII_KM = {
   NARROW: 100,
   VAGUE: 250,
 } as const;
+
+export const PRECISION_POINTS = {
+  EXACT: 25,
+  NARROW: 10,
+  VAGUE: 5,
+} as const;

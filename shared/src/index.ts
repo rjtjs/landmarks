@@ -15,4 +15,4 @@ export {
   LandmarkSchema,
   LandmarkWithoutLocationSchema,
 } from "./types";
-export { PRECISION_RADII_KM } from "./config";
+export { PRECISION_RADII_KM, PRECISION_POINTS } from "./config";

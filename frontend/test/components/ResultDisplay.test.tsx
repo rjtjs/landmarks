@@ -44,47 +44,6 @@ describe("ResultDisplay", () => {
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it("displays distance without decimal places", () => {
-    render(
-      <ResultDisplay
-        result={EXACT_CORRECT_RESULT}
-        landmarkName="Eiffel Tower"
-        onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
-      />,
-    );
-
-    expect(screen.getByText("1 km away")).toBeInTheDocument();
-  });
-
-  it("displays distance for larger values", () => {
-    render(
-      <ResultDisplay
-        result={NARROW_CORRECT_RESULT}
-        landmarkName="Eiffel Tower"
-        onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
-      />,
-    );
-
-    expect(screen.getByText("75 km away")).toBeInTheDocument();
-  });
-
-  it("displays wiki summary", () => {
-    render(
-      <ResultDisplay
-        result={EXACT_CORRECT_RESULT}
-        landmarkName="Eiffel Tower"
-        onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
-      />,
-    );
-
-    expect(
-      screen.getByText(/The Eiffel Tower is a wrought-iron lattice tower/),
-    ).toBeInTheDocument();
-  });
-
   it("applies exact CSS class for EXACT precision", () => {
     const { container } = render(
       <ResultDisplay
@@ -139,90 +98,6 @@ describe("ResultDisplay", () => {
 
     const resultContainer = container.firstChild as HTMLElement;
     expect(resultContainer.className).toContain("incorrect");
-  });
-
-  it("displays correct at exact precision message", () => {
-    render(
-      <ResultDisplay
-        result={EXACT_CORRECT_RESULT}
-        landmarkName="Eiffel Tower"
-        onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
-      />,
-    );
-
-    expect(screen.getByText("Correct at exact precision!")).toBeInTheDocument();
-  });
-
-  it("displays correct at narrow precision message", () => {
-    render(
-      <ResultDisplay
-        result={NARROW_CORRECT_RESULT}
-        landmarkName="Eiffel Tower"
-        onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
-      />,
-    );
-
-    expect(
-      screen.getByText("Correct at narrow precision!"),
-    ).toBeInTheDocument();
-  });
-
-  it("displays correct at vague precision message", () => {
-    render(
-      <ResultDisplay
-        result={VAGUE_CORRECT_RESULT}
-        landmarkName="Eiffel Tower"
-        onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
-      />,
-    );
-
-    expect(screen.getByText("Correct at vague precision!")).toBeInTheDocument();
-  });
-
-  it("displays incorrect message for wrong guess", () => {
-    render(
-      <ResultDisplay
-        result={INCORRECT_RESULT}
-        landmarkName="Eiffel Tower"
-        onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
-      />,
-    );
-
-    expect(screen.getByText("Incorrect")).toBeInTheDocument();
-  });
-
-  it("shows next step message when retry is available", () => {
-    render(
-      <ResultDisplay
-        result={VAGUE_CORRECT_RESULT}
-        landmarkName="Eiffel Tower"
-        onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={false}
-      />,
-    );
-
-    expect(
-      screen.getByText("You can now try a more precise guess!"),
-    ).toBeInTheDocument();
-  });
-
-  it("does not show next step message when no retry available", () => {
-    render(
-      <ResultDisplay
-        result={EXACT_CORRECT_RESULT}
-        landmarkName="Eiffel Tower"
-        onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
-      />,
-    );
-
-    expect(
-      screen.queryByText("You can now try a more precise guess!"),
-    ).not.toBeInTheDocument();
   });
 
   it("shows Play Again button when showPlayAgain is true", () => {

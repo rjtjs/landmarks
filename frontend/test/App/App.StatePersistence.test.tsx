@@ -164,10 +164,6 @@ describe("App - State Persistence", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Eiffel Tower")).toBeInTheDocument();
-      expect(screen.getByText("200 km away")).toBeInTheDocument();
-      expect(
-        screen.getByText("You can now try a more precise guess!"),
-      ).toBeInTheDocument();
     });
   });
 });

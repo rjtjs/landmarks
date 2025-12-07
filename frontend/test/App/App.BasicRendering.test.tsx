@@ -81,9 +81,9 @@ describe("App - Basic Rendering", () => {
       expect(screen.getAllByRole("img")).toHaveLength(2);
     });
 
-    expect(screen.getByText("Precision Level:")).toBeInTheDocument();
-    expect(screen.getByLabelText("Vague")).toBeInTheDocument();
-    expect(screen.getByLabelText("Narrow")).toBeInTheDocument();
-    expect(screen.getByLabelText("Exact")).toBeInTheDocument();
+    expect(screen.getByText("Precision:")).toBeInTheDocument();
+    expect(screen.getByLabelText("5 points")).toBeInTheDocument();
+    expect(screen.getByLabelText("10 points")).toBeInTheDocument();
+    expect(screen.getByLabelText("25 points")).toBeInTheDocument();
   });
 });
