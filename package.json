@@ -2,17 +2,20 @@
   "name": "landmarks",
   "private": true,
   "scripts": {
-    "dev": "pnpm -r --parallel dev",
-    "dev:backend": "pnpm --filter backend dev",
-    "dev:frontend": "pnpm --filter frontend dev",
     "build": "pnpm -r build",
     "build:backend": "pnpm --filter backend build",
     "build:frontend": "pnpm --filter frontend build",
+    "dev": "pnpm -r --parallel dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "dev:frontend": "pnpm --filter frontend dev",
     "lint": "pnpm -r lint",
     "lint:fix": "pnpm -r lint:fix",
+    "predev": "pnpm --filter @landmarks/shared build",
+    "prepare": "husky",
+    "pretest": "pnpm --filter @landmarks/shared build",
+    "postinstall": "pnpm --filter @landmarks/shared build",
     "test": "pnpm -r test",
-    "typecheck": "pnpm -r typecheck",
-    "prepare": "husky"
+    "typecheck": "pnpm -r typecheck"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
