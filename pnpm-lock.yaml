@@ -129,6 +129,9 @@ importers:
       vite:
         specifier: ^7.2.4
         version: 7.2.6(@types/node@24.10.1)(tsx@4.21.0)(yaml@2.8.2)
+      vitest-localstorage-mock:
+        specifier: ^0.1.2
+        version: 0.1.2(vitest@4.0.15)
 
   shared:
     dependencies:
@@ -3862,6 +3865,14 @@ packages:
       yaml:
         optional: true
 
+  vitest-localstorage-mock@0.1.2:
+    resolution:
+      {
+        integrity: sha512-1oee6iDWhhquzVogssbpwQi6a2F3L+nCKF2+qqyCs5tH0sOYRyTqnsfj2dtmEQiL4xtJkHLn42hEjHGESlsJHw==,
+      }
+    peerDependencies:
+      vitest: "*"
+
   vitest@4.0.15:
     resolution:
       {
@@ -6160,6 +6171,10 @@ snapshots:
       fsevents: 2.3.3
       tsx: 4.21.0
       yaml: 2.8.2
+
+  vitest-localstorage-mock@0.1.2(vitest@4.0.15):
+    dependencies:
+      vitest: 4.0.15(@types/node@24.10.1)(@vitest/ui@4.0.15)(jsdom@27.2.0)(tsx@4.21.0)(yaml@2.8.2)
 
   vitest@4.0.15(@types/node@24.10.1)(@vitest/ui@4.0.15)(jsdom@27.2.0)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:

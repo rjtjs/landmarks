@@ -6,6 +6,7 @@ import type {
 } from "@landmarks/shared";
 import { CorrectnessLevel } from "@landmarks/shared";
 import { getRandomLandmark, submitGuess } from "./services/api";
+import { getItem, setItem } from "./utils/localStorage";
 import Map from "./components/Map";
 import LandmarkImages from "./components/LandmarkImages";
 import ResultDisplay from "./components/ResultDisplay";
@@ -22,8 +23,25 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadLandmark();
+    const savedState = getItem("gameState");
+    if (savedState && savedState.landmark) {
+      setLandmark(savedState.landmark);
+      setGuessLocation(savedState.guessLocation);
+      setResult(savedState.result);
+    } else {
+      loadLandmark();
+    }
   }, []);
+
+  useEffect(() => {
+    if (landmark) {
+      setItem("gameState", {
+        landmark,
+        guessLocation,
+        result,
+      });
+    }
+  }, [landmark, guessLocation, result]);
 
   async function loadLandmark() {
     try {
@@ -31,6 +49,8 @@ export default function App() {
       setError(null);
       const data = await getRandomLandmark();
       setLandmark(data);
+      setGuessLocation(null);
+      setResult(null);
     } catch (err) {
       setError("Failed to load landmark");
       console.error(err);

@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import App from "../src/App";
 import * as api from "../src/services/api";
+import * as localStorageUtils from "../src/utils/localStorage";
 
 const mockMap = {
   on: vi.fn(),
@@ -248,6 +249,165 @@ describe("App", () => {
 
     await waitFor(() => {
       expect(api.getRandomLandmark).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("game state persistence", () => {
+    it("restores game state from localStorage on mount", async () => {
+      const savedState = {
+        landmark: {
+          id: "saved-landmark",
+          name: "Saved Landmark",
+          detailsUrl: "https://example.com",
+          images: ["https://example.com/saved.jpg"],
+        },
+        guessLocation: { lng: 2.3522, lat: 48.8566 },
+        result: null,
+      };
+
+      vi.spyOn(localStorageUtils, "getItem").mockReturnValue(savedState);
+
+      render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByAltText("Saved Landmark 1")).toBeInTheDocument();
+      });
+
+      expect(api.getRandomLandmark).not.toHaveBeenCalled();
+    });
+
+    it("loads new landmark when no saved state exists", async () => {
+      vi.spyOn(localStorageUtils, "getItem").mockReturnValue(null);
+
+      render(<App />);
+
+      await waitFor(() => {
+        expect(api.getRandomLandmark).toHaveBeenCalled();
+      });
+    });
+
+    it("persists game state to localStorage when landmark is loaded", async () => {
+      const setItemSpy = vi.spyOn(localStorageUtils, "setItem");
+
+      render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getAllByRole("img")).toHaveLength(2);
+      });
+
+      await waitFor(() => {
+        expect(setItemSpy).toHaveBeenCalledWith("gameState", {
+          landmark: {
+            id: "test-landmark",
+            name: "Test Landmark",
+            detailsUrl: "https://example.com",
+            images: [
+              "https://example.com/image1.jpg",
+              "https://example.com/image2.jpg",
+            ],
+          },
+          guessLocation: null,
+          result: null,
+        });
+      });
+    });
+
+    it("persists game state when guess location is selected", async () => {
+      const setItemSpy = vi.spyOn(localStorageUtils, "setItem");
+
+      render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getAllByRole("img")).toHaveLength(2);
+      });
+
+      const clickHandler = mockMap.on.mock.calls.find(
+        (call) => call[0] === "click",
+      )?.[1];
+      clickHandler({ lngLat: { lng: 2.2945, lat: 48.8584 } });
+
+      await waitFor(() => {
+        expect(setItemSpy).toHaveBeenCalledWith(
+          "gameState",
+          expect.objectContaining({
+            guessLocation: { lng: 2.2945, lat: 48.8584 },
+          }),
+        );
+      });
+    });
+
+    it("persists game state with result after submitting guess", async () => {
+      const user = userEvent.setup();
+      const setItemSpy = vi.spyOn(localStorageUtils, "setItem");
+
+      vi.mocked(api.submitGuess).mockResolvedValue({
+        correctness: "CORRECT",
+        actualLocation: { lng: 2.2945, lat: 48.8584 },
+        distanceKm: 0.5,
+        wikiSummary: "Test summary",
+        wikiUrl: "https://example.com/wiki",
+      });
+
+      render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getAllByRole("img")).toHaveLength(2);
+      });
+
+      const clickHandler = mockMap.on.mock.calls.find(
+        (call) => call[0] === "click",
+      )?.[1];
+      clickHandler({ lngLat: { lng: 2.2945, lat: 48.8584 } });
+
+      await waitFor(() => {
+        expect(screen.getByText("Submit Guess")).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByText("Submit Guess"));
+
+      await waitFor(() => {
+        expect(setItemSpy).toHaveBeenCalledWith(
+          "gameState",
+          expect.objectContaining({
+            result: {
+              correctness: "CORRECT",
+              actualLocation: { lng: 2.2945, lat: 48.8584 },
+              distanceKm: 0.5,
+              wikiSummary: "Test summary",
+              wikiUrl: "https://example.com/wiki",
+            },
+          }),
+        );
+      });
+    });
+
+    it("restores complete game state including result", async () => {
+      const savedState = {
+        landmark: {
+          id: "saved-landmark",
+          name: "Saved Landmark",
+          detailsUrl: "https://example.com",
+          images: ["https://example.com/saved.jpg"],
+        },
+        guessLocation: { lng: 2.3522, lat: 48.8566 },
+        result: {
+          correctness: "CLOSE" as const,
+          actualLocation: { lng: 2.2945, lat: 48.8584 },
+          distanceKm: 200,
+          wikiSummary: "Saved summary",
+          wikiUrl: "https://example.com/wiki",
+        },
+      };
+
+      vi.spyOn(localStorageUtils, "getItem").mockReturnValue(savedState);
+
+      render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Saved Landmark")).toBeInTheDocument();
+        expect(screen.getByText("200 km away")).toBeInTheDocument();
+        expect(screen.getByText("Play Again")).toBeInTheDocument();
+      });
     });
   });
 });
