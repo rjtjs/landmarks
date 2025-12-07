@@ -53,7 +53,7 @@ describe("Landmark precision levels", () => {
   });
 
   it(`returns correct at NARROW precision for distance between ${PRECISION_RADII_KM.EXACT}km and ${PRECISION_RADII_KM.NARROW}km`, async () => {
-    const closeLocation = { lng: 2.99, lat: 4949.44 };
+    const closeLocation = { lng: 2.99, lat: 49.44 };
 
     const guessPayload: Guess = {
       landmarkId: "eiffel",

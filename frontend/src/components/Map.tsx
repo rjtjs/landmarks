@@ -112,7 +112,7 @@ export default function Map({
       }
       cleanupGuessCircle(mapInstance);
     };
-  }, [guessLocation, selectedPrecision, achievedPrecision]);
+  }, [guessLocation, selectedPrecision, achievedPrecision, actualLocation]);
 
   useEffect(() => {
     if (!map.current || !actualLocation || !mapLoaded.current) return;
