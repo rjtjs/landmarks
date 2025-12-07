@@ -1,7 +1,6 @@
 import { Request, Response, Router } from "express";
-import type { Guess } from "@landmarks/shared";
+import { CorrectnessLevel, type Guess, type GuessResponse } from "@landmarks/shared";
 import { getLandmarkById, getRandomLandmark } from "../data/examples";
-import { GuessCorrectness, GuessResponse, WikiData } from "../types/responses";
 import { haversineDistance } from "../utils/geographic";
 import { getWikiSummary } from "../utils/landmark";
 
@@ -21,28 +20,31 @@ router.post("/guess", async (req: Request, res: Response) => {
   }
 
   const distanceKm = haversineDistance(
-    landmark.props.coordinates.latitude,
-    landmark.props.coordinates.longitude,
+    landmark.coordinates.latitude,
+    landmark.coordinates.longitude,
     coordinates.latitude,
     coordinates.longitude
   );
 
-  try {
-    const wikiSummary = await getWikiSummary(landmark.props.wikiUrl);
-    const wikiData: WikiData = {
-      extract: wikiSummary.extract,
-      url: wikiSummary.content_urls?.desktop?.page || "",
-    };
+  let correctness: CorrectnessLevel;
+  if (distanceKm < 50) {
+    correctness = CorrectnessLevel.CORRECT;
+  } else if (distanceKm < 500) {
+    correctness = CorrectnessLevel.CLOSE;
+  } else {
+    correctness = CorrectnessLevel.INCORRECT;
+  }
 
-    const correctness = distanceKm < 50 ? GuessCorrectness.CORRECT : GuessCorrectness.INCORRECT;
+  try {
+    const wikiSummary = await getWikiSummary(landmark.wikiUrl);
     const response: GuessResponse = {
       correctness,
-      correctCoordinates: {
-        latitude: landmark.props.coordinates.latitude,
-        longitude: landmark.props.coordinates.longitude,
-      },
+      actualCoordinates: landmark.coordinates,
       distanceKm,
-      wikiData,
+      wikiInfo: {
+        summary: wikiSummary.extract,
+        url: wikiSummary.content_urls?.desktop?.page || "",
+      },
     };
     res.json(response);
   } catch {

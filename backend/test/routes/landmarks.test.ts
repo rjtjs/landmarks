@@ -3,10 +3,9 @@ import express from "express";
 import { Server } from "http";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import type { Guess } from "@landmarks/shared";
+import type { Guess, GuessResponse } from "@landmarks/shared";
 import errorHandler from "../../src/middleware/errors";
 import router from "../../src/routes/index";
-import { GuessResponse } from "../../src/types/responses";
 
 const app = express();
 app.use(cors());
@@ -45,7 +44,8 @@ describe("Landmark routes", () => {
     const body = res.body as GuessResponse;
     expect(body).toHaveProperty("correctness");
     expect(body).toHaveProperty("distanceKm");
-    expect(body).toHaveProperty("wikiData");
+    expect(body).toHaveProperty("actualCoordinates");
+    expect(body).toHaveProperty("wikiInfo");
   });
 
   it("POST /api/landmarks/guess with invalid id returns 400", async () => {

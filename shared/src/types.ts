@@ -4,22 +4,31 @@ export interface Coordinates {
 }
 
 export interface Guess {
-  coordinates: Coordinates;
   landmarkId: string;
+  coordinates: Coordinates;
+}
+
+export enum CorrectnessLevel {
+  CORRECT = 1,
+  CLOSE = 2,
+  INCORRECT = 3,
+}
+
+export interface WikiInfo {
+  summary: string;
+  url: string;
 }
 
 export interface GuessResponse {
-  correct: boolean;
-  distance?: number;
-  actualLocation?: Coordinates;
-  score?: number;
-  message?: string;
+  correctness: CorrectnessLevel;
+  actualCoordinates: Coordinates;
+  distanceKm: number;
+  wikiInfo: WikiInfo;
 }
 
 export interface Landmark {
   id: string;
   name: string;
   coordinates: Coordinates;
-  description?: string;
-  imageUrl?: string;
+  wikiUrl: string;
 }
