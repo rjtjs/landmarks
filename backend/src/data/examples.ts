@@ -9,7 +9,7 @@ const LANDMARKS: Record<string, Landmark> = {
       "https://en.wikipedia.org/api/rest_v1/page/summary/Eiffel_Tower",
     images: [
       "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/800px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Tour_Eiffel_at_sunset%2C_Paris_June_2010.jpg/800px-Tour_Eiffel_at_sunset%2C_Paris_June_2010.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Eiffeltoren_Parijs.jpg/800px-Eiffeltoren_Parijs.jpg",
     ],
   },
   taj: {

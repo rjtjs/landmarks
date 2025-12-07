@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
+import { useEffect, useState } from "react";
 import type {
   LngLat,
   LandmarkWithoutLocation,
@@ -8,52 +6,22 @@ import type {
 } from "@landmarks/shared";
 import { CorrectnessLevel } from "@landmarks/shared";
 import { getRandomLandmark, submitGuess } from "./services/api";
-
-mapboxgl.accessToken =
-  (import.meta.env.VITE_MBX_TOKEN as string | undefined) || "";
+import Map from "./components/Map";
+import LandmarkImages from "./components/LandmarkImages";
+import ResultDisplay from "./components/ResultDisplay";
 
 export default function App() {
-  const mapContainer = useRef<HTMLDivElement | null>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
   const [landmark, setLandmark] = useState<LandmarkWithoutLocation | null>(
     null,
   );
-  const [guessMarker, setGuessMarker] = useState<mapboxgl.Marker | null>(null);
   const [guessLocation, setGuessLocation] = useState<LngLat | null>(null);
   const [result, setResult] = useState<GuessResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const resultMarker = useRef<mapboxgl.Marker | null>(null);
 
   useEffect(() => {
     loadLandmark();
   }, []);
-
-  useEffect(() => {
-    if (map.current || !mapContainer.current) return;
-
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/streets-v12",
-      center: [0, 20],
-      zoom: 1.5,
-    });
-
-    map.current.on("click", (e) => {
-      if (!map.current || result) return;
-
-      setGuessLocation({ lng: e.lngLat.lng, lat: e.lngLat.lat });
-
-      if (guessMarker) {
-        guessMarker.setLngLat(e.lngLat);
-      } else {
-        const newMarker = new mapboxgl.Marker({ color: "red" })
-          .setLngLat(e.lngLat)
-          .addTo(map.current);
-        setGuessMarker(newMarker);
-      }
-    });
-  }, [guessMarker, result]);
 
   async function loadLandmark() {
     try {
@@ -80,17 +48,6 @@ export default function App() {
         location: guessLocation,
       });
       setResult(guessResult);
-
-      if (map.current) {
-        if (guessMarker) {
-          const color = getMarkerColor(guessResult.correctness);
-          guessMarker.getElement().style.filter = `hue-rotate(${color === "green" ? "0" : color === "yellow" ? "60" : "0"}deg)`;
-        }
-
-        resultMarker.current = new mapboxgl.Marker({ color: "green" })
-          .setLngLat(guessResult.actualLocation)
-          .addTo(map.current);
-      }
     } catch (err) {
       setError("Failed to submit guess");
       console.error(err);
@@ -99,29 +56,21 @@ export default function App() {
     }
   }
 
-  function getMarkerColor(correctness: CorrectnessLevel): string {
+  function getMarkerColor(correctness: string): "red" | "yellow" | "green" {
     switch (correctness) {
       case CorrectnessLevel.CORRECT:
         return "green";
       case CorrectnessLevel.CLOSE:
         return "yellow";
       case CorrectnessLevel.INCORRECT:
+      default:
         return "red";
     }
   }
 
   function handlePlayAgain() {
-    setLandmark(null);
     setGuessLocation(null);
     setResult(null);
-    if (guessMarker) {
-      guessMarker.remove();
-      setGuessMarker(null);
-    }
-    if (resultMarker.current) {
-      resultMarker.current.remove();
-      resultMarker.current = null;
-    }
     loadLandmark();
   }
 
@@ -159,29 +108,15 @@ export default function App() {
       <h1>Landmarks Guessing Game</h1>
 
       {landmark && (
-        <div style={{ marginBottom: "20px" }}>
-          <h2>Where is this landmark?</h2>
-          <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-            {landmark.images.map((url, idx) => (
-              <img
-                key={idx}
-                src={url}
-                alt={`Landmark ${idx + 1}`}
-                style={{
-                  width: "300px",
-                  height: "200px",
-                  objectFit: "cover",
-                  border: "1px solid #ccc",
-                }}
-              />
-            ))}
-          </div>
-        </div>
+        <LandmarkImages images={landmark.images} name={landmark.name} />
       )}
 
-      <div
-        ref={mapContainer}
-        style={{ width: "100%", height: "500px", border: "1px solid #ccc" }}
+      <Map
+        onLocationSelect={setGuessLocation}
+        guessLocation={guessLocation}
+        {...(result && { actualLocation: result.actualLocation })}
+        correctnessColor={result ? getMarkerColor(result.correctness) : "red"}
+        disabled={!!result}
       />
 
       {!result && guessLocation && (
@@ -194,51 +129,15 @@ export default function App() {
         </button>
       )}
 
-      {result && (
-        <div
-          style={{
-            marginTop: "20px",
-            padding: "20px",
-            border: "1px solid #ccc",
-            backgroundColor: "#f9f9f9",
-          }}
-        >
-          <h2>Result</h2>
-          <p>
-            <strong>Correctness:</strong>{" "}
-            {result.correctness === CorrectnessLevel.CORRECT
-              ? "Correct!"
-              : result.correctness === CorrectnessLevel.CLOSE
-                ? "Close!"
-                : "Incorrect"}
-          </p>
-          <p>
-            <strong>Distance:</strong> {result.distanceKm.toFixed(2)} km
-          </p>
-          <p>
-            <strong>Location:</strong> {landmark?.name}
-          </p>
-          <div style={{ marginTop: "10px" }}>
-            <h3>About</h3>
-            <p>{result.wikiSummary}</p>
-            <a href={result.wikiUrl} target="_blank" rel="noopener noreferrer">
-              Read more
-            </a>
-          </div>
-          <button
-            onClick={handlePlayAgain}
-            style={{
-              marginTop: "10px",
-              padding: "10px 20px",
-              fontSize: "16px",
-            }}
-          >
-            Play Again
-          </button>
-        </div>
+      {result && landmark && (
+        <ResultDisplay
+          result={result}
+          landmarkName={landmark.name}
+          onPlayAgain={handlePlayAgain}
+        />
       )}
 
-      {error && result && <div style={{ color: "red" }}>{error}</div>}
+      {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
     </div>
   );
 }
