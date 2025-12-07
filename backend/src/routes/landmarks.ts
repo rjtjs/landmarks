@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { CorrectnessLevel, type Guess, type GuessResponse } from "@landmarks/shared";
+import { CorrectnessLevel, type Guess, type GuessResult } from "@landmarks/shared";
 import { getLandmarkById, getRandomLandmark } from "../data/examples";
 import { haversineDistance } from "../utils/geographic";
 import { getWikiSummary } from "../utils/landmark";
@@ -12,7 +12,7 @@ router.get("/random", (_req: Request, res: Response) => {
 });
 
 router.post("/guess", async (req: Request, res: Response) => {
-  const { landmarkId, coordinates } = req.body as Guess;
+  const { landmarkId, location } = req.body as Guess;
 
   const landmark = getLandmarkById(landmarkId);
   if (!landmark) {
@@ -20,10 +20,10 @@ router.post("/guess", async (req: Request, res: Response) => {
   }
 
   const distanceKm = haversineDistance(
-    landmark.coordinates.latitude,
-    landmark.coordinates.longitude,
-    coordinates.latitude,
-    coordinates.longitude
+    landmark.location.lat,
+    landmark.location.lng,
+    location.lat,
+    location.lng
   );
 
   let correctness: CorrectnessLevel;
@@ -37,14 +37,12 @@ router.post("/guess", async (req: Request, res: Response) => {
 
   try {
     const wikiSummary = await getWikiSummary(landmark.wikiUrl);
-    const response: GuessResponse = {
+    const response: GuessResult = {
       correctness,
-      actualCoordinates: landmark.coordinates,
+      actualLocation: landmark.location,
       distanceKm,
-      wikiInfo: {
-        summary: wikiSummary.extract,
-        url: wikiSummary.content_urls?.desktop?.page || "",
-      },
+      wikiSummary: wikiSummary.extract,
+      wikiUrl: wikiSummary.content_urls?.desktop?.page || "",
     };
     res.json(response);
   } catch {

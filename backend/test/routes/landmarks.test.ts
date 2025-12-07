@@ -3,7 +3,7 @@ import express from "express";
 import { Server } from "http";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import type { Guess, GuessResponse } from "@landmarks/shared";
+import type { Guess, GuessResult } from "@landmarks/shared";
 import errorHandler from "../../src/middleware/errors";
 import router from "../../src/routes/index";
 
@@ -17,7 +17,7 @@ describe("Landmark routes", () => {
   let server: Server;
 
   beforeAll(() => {
-    server = app.listen(0); // random available port
+    server = app.listen(0);
   });
 
   afterAll(() => {
@@ -30,28 +30,31 @@ describe("Landmark routes", () => {
     const res = await request(app).get("/api/landmarks/random");
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("id");
+    expect(res.body).toHaveProperty("name");
+    expect(res.body).toHaveProperty("location");
   });
 
   it("POST /api/landmarks/guess returns distance and wiki info", async () => {
     const guessPayload: Guess = {
       landmarkId: "eiffel",
-      coordinates: { latitude: 48.8584, longitude: 2.2945 },
+      location: { lng: 2.2945, lat: 48.8584 },
     };
 
     const res = await request(server).post("/api/landmarks/guess").send(guessPayload);
     expect(res.status).toBe(200);
 
-    const body = res.body as GuessResponse;
+    const body = res.body as GuessResult;
     expect(body).toHaveProperty("correctness");
     expect(body).toHaveProperty("distanceKm");
-    expect(body).toHaveProperty("actualCoordinates");
-    expect(body).toHaveProperty("wikiInfo");
+    expect(body).toHaveProperty("actualLocation");
+    expect(body).toHaveProperty("wikiSummary");
+    expect(body).toHaveProperty("wikiUrl");
   });
 
   it("POST /api/landmarks/guess with invalid id returns 400", async () => {
     const res = await request(server)
       .post("/api/landmarks/guess")
-      .send({ landmarkId: "invalid", guess: { lat: 0, lng: 0 } });
+      .send({ landmarkId: "invalid", location: { lng: 0, lat: 0 } });
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("error");

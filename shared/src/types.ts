@@ -1,11 +1,11 @@
-export interface Coordinates {
-  latitude: number;
-  longitude: number;
+export interface LngLat {
+  lng: number;
+  lat: number;
 }
 
 export interface Guess {
   landmarkId: string;
-  coordinates: Coordinates;
+  location: LngLat;
 }
 
 export enum CorrectnessLevel {
@@ -14,21 +14,17 @@ export enum CorrectnessLevel {
   INCORRECT = 3,
 }
 
-export interface WikiInfo {
-  summary: string;
-  url: string;
-}
-
-export interface GuessResponse {
+export interface GuessResult {
   correctness: CorrectnessLevel;
-  actualCoordinates: Coordinates;
+  actualLocation: LngLat;
   distanceKm: number;
-  wikiInfo: WikiInfo;
+  wikiSummary: string;
+  wikiUrl: string;
 }
 
 export interface Landmark {
   id: string;
   name: string;
-  coordinates: Coordinates;
+  location: LngLat;
   wikiUrl: string;
 }

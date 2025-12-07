@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import type { Coordinates } from "@landmarks/shared";
+import type { LngLat } from "@landmarks/shared";
 
 mapboxgl.accessToken =
   (import.meta.env.VITE_MBX_TOKEN as string | undefined) || "";
@@ -10,7 +10,7 @@ export default function App() {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [marker, setMarker] = useState<mapboxgl.Marker | null>(null);
-  const [_coordinates, _setCoordinates] = useState<Coordinates | null>(null);
+  const [_location, _setLocation] = useState<LngLat | null>(null);
 
   useEffect(() => {
     if (map.current || !mapContainer.current) return;

@@ -6,7 +6,7 @@ describe("landmarks data", () => {
     const landmark = getRandomLandmark();
     expect(landmark).toHaveProperty("id");
     expect(landmark).toHaveProperty("name");
-    expect(landmark).toHaveProperty("coordinates");
+    expect(landmark).toHaveProperty("location");
   });
 
   it("gets landmark by valid id", () => {
