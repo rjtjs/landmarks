@@ -47,6 +47,12 @@ describe("localStorage utility", () => {
       const result = getItem("theme");
       expect(result).toBeNull();
     });
+
+    it("removes corrupted data from localStorage", () => {
+      localStorage.setItem("theme", "invalid-json");
+      getItem("theme");
+      expect(localStorage.getItem("theme")).toBeNull();
+    });
   });
 
   describe("setItem", () => {
