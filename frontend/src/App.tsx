@@ -93,7 +93,10 @@ export default function App() {
       });
       setResult(guessResult);
 
-      if (guessResult.isCorrect && guessResult.availablePrecisions.length > 0) {
+      if (
+        guessResult.isCorrect &&
+        guessResult.availablePrecisions?.length > 0
+      ) {
         setAvailablePrecisions(guessResult.availablePrecisions);
         setGuessLocation(null);
       } else {
@@ -121,7 +124,7 @@ export default function App() {
 
   const isGameEnded = !!(
     result &&
-    (result.availablePrecisions.length === 0 || !result.isCorrect)
+    (result.availablePrecisions?.length === 0 || !result.isCorrect)
   );
 
   if (loading && !landmark) {

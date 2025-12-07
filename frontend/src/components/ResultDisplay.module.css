@@ -58,14 +58,6 @@
   color: var(--text-tertiary);
 }
 
-.nextStepMessage {
-  font-size: 0.95rem;
-  font-weight: 500;
-  margin: 0 0 1rem 0;
-  color: var(--primary-color);
-  font-style: italic;
-}
-
 .summary {
   line-height: 1.7;
   margin-bottom: 1.25rem;
@@ -117,10 +109,6 @@
 
   .title {
     font-size: 1.875rem;
-  }
-
-  .precisionText {
-    font-size: 1.125rem;
   }
 
   .distanceText {

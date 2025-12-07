@@ -78,21 +78,9 @@ export function addGuessCircle(
 export function addActualLocationCircles(
   map: Map,
   location: LngLat,
-  narrowColors: { fill: string; border: string },
   exactColors: { fill: string; border: string },
 ): void {
-  removeCircleFromMap(map, "actual-circle-narrow", "actual-circle-narrow");
   removeCircleFromMap(map, "actual-circle-exact", "actual-circle-exact");
-
-  addCircleToMap(
-    map,
-    "actual-circle-narrow",
-    "actual-circle-narrow",
-    location,
-    PRECISION_RADII_KM.NARROW,
-    narrowColors.fill,
-    narrowColors.border,
-  );
 
   addCircleToMap(
     map,
@@ -110,6 +98,5 @@ export function cleanupGuessCircle(map: Map): void {
 }
 
 export function cleanupActualLocationCircles(map: Map): void {
-  removeCircleFromMap(map, "actual-circle-narrow", "actual-circle-narrow");
   removeCircleFromMap(map, "actual-circle-exact", "actual-circle-exact");
 }

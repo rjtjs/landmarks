@@ -124,12 +124,7 @@ export default function Map({
       actualMarker.current.remove();
     }
 
-    addActualLocationCircles(
-      mapInstance,
-      actualLocation,
-      circleColors.narrow,
-      circleColors.exact,
-    );
+    addActualLocationCircles(mapInstance, actualLocation, circleColors.exact);
 
     actualMarker.current = new mapboxgl.Marker({ color: "green" })
       .setLngLat(actualLocation)
