@@ -54,21 +54,6 @@
   text-align: left;
 }
 
-.link {
-  color: var(--link-color);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s;
-  display: inline-block;
-  border-bottom: 1px solid transparent;
-  margin-bottom: 0;
-}
-
-.link:hover {
-  color: var(--link-hover);
-  border-bottom-color: var(--link-hover);
-}
-
 .button {
   margin-top: 2rem;
   padding: 0.875rem 2rem;

@@ -3,11 +3,6 @@ import { describe, it, expect } from "vitest";
 import LandmarkImages from "../../src/components/LandmarkImages";
 
 describe("LandmarkImages", () => {
-  it("renders heading", () => {
-    render(<LandmarkImages images={[]} />);
-    expect(screen.getByText("Where is this landmark?")).toBeInTheDocument();
-  });
-
   it("renders images from the images array", () => {
     const images = [
       "https://example.com/image1.jpg",

@@ -31,6 +31,14 @@ vi.mock("mapbox-gl", () => ({
 
 vi.mock("../src/services/api");
 
+vi.mock("../src/contexts/ThemeContext", () => ({
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
+  useTheme: () => ({
+    theme: "light",
+    toggleTheme: vi.fn(),
+  }),
+}));
+
 describe("App", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -45,20 +53,20 @@ describe("App", () => {
     });
   });
 
-  it("renders the app with heading", async () => {
+  it("renders the app with correct heading", async () => {
     render(<App />);
-    expect(screen.getByText("Landmarks Guessing Game")).toBeInTheDocument();
+    expect(screen.getByText("Where in the World?")).toBeInTheDocument();
   });
 
   it("loads and displays landmark images", async () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText("Where is this landmark?")).toBeInTheDocument();
+      const images = screen.getAllByRole("img");
+      expect(images).toHaveLength(2);
     });
 
     const images = screen.getAllByRole("img");
-    expect(images).toHaveLength(2);
     expect(images[0]).toHaveAttribute("src", "https://example.com/image1.jpg");
     expect(images[1]).toHaveAttribute("src", "https://example.com/image2.jpg");
   });
@@ -82,13 +90,13 @@ describe("App", () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText("Where is this landmark?")).toBeInTheDocument();
+      expect(screen.getAllByRole("img")).toHaveLength(2);
     });
 
     expect(screen.queryByText("Submit Guess")).not.toBeInTheDocument();
   });
 
-  it("submits guess and displays result", async () => {
+  it("submits guess and displays result with landmark name", async () => {
     const user = userEvent.setup();
 
     vi.mocked(api.submitGuess).mockResolvedValue({
@@ -102,7 +110,7 @@ describe("App", () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText("Where is this landmark?")).toBeInTheDocument();
+      expect(screen.getAllByRole("img")).toHaveLength(2);
     });
 
     await waitFor(() => {
@@ -122,9 +130,78 @@ describe("App", () => {
     await user.click(screen.getByText("Submit Guess"));
 
     await waitFor(() => {
-      expect(screen.getByText("Result")).toBeInTheDocument();
-      expect(screen.getByText("Correct!")).toBeInTheDocument();
-      expect(screen.getByText(/0.50 km/)).toBeInTheDocument();
+      expect(screen.getByText("Test Landmark")).toBeInTheDocument();
+      expect(screen.getByText("1 km away")).toBeInTheDocument();
+    });
+  });
+
+  it("does not show correctness text in results", async () => {
+    const user = userEvent.setup();
+
+    vi.mocked(api.submitGuess).mockResolvedValue({
+      correctness: "CORRECT",
+      actualLocation: { lng: 2.2945, lat: 48.8584 },
+      distanceKm: 0.5,
+      wikiSummary: "Test summary",
+      wikiUrl: "https://example.com/wiki",
+    });
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getAllByRole("img")).toHaveLength(2);
+    });
+
+    const clickHandler = mockMap.on.mock.calls.find(
+      (call) => call[0] === "click",
+    )?.[1];
+    clickHandler({ lngLat: { lng: 2.2945, lat: 48.8584 } });
+
+    await waitFor(() => {
+      expect(screen.getByText("Submit Guess")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Submit Guess"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Landmark")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText("Correct!")).not.toBeInTheDocument();
+    expect(screen.queryByText("Result")).not.toBeInTheDocument();
+  });
+
+  it("landmark name is clickable link to Wikipedia", async () => {
+    const user = userEvent.setup();
+
+    vi.mocked(api.submitGuess).mockResolvedValue({
+      correctness: "CLOSE",
+      actualLocation: { lng: 2.2945, lat: 48.8584 },
+      distanceKm: 200,
+      wikiSummary: "Test summary",
+      wikiUrl: "https://example.com/wiki/test",
+    });
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getAllByRole("img")).toHaveLength(2);
+    });
+
+    const clickHandler = mockMap.on.mock.calls.find(
+      (call) => call[0] === "click",
+    )?.[1];
+    clickHandler({ lngLat: { lng: 2, lat: 48 } });
+
+    await waitFor(() => {
+      expect(screen.getByText("Submit Guess")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Submit Guess"));
+
+    await waitFor(() => {
+      const link = screen.getByRole("link", { name: "Test Landmark" });
+      expect(link).toHaveAttribute("href", "https://example.com/wiki/test");
     });
   });
 
@@ -142,7 +219,7 @@ describe("App", () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText("Where is this landmark?")).toBeInTheDocument();
+      expect(screen.getAllByRole("img")).toHaveLength(2);
     });
 
     const clickHandler = mockMap.on.mock.calls.find(

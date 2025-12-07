@@ -14,79 +14,7 @@ describe("ResultDisplay", () => {
     wikiUrl: "https://example.com/wiki",
   };
 
-  it("renders result heading", () => {
-    render(
-      <ResultDisplay
-        result={correctResult}
-        landmarkName="Test Landmark"
-        onPlayAgain={mockOnPlayAgain}
-      />,
-    );
-
-    expect(screen.getByText("Result")).toBeInTheDocument();
-  });
-
-  it("displays correct correctness text for CORRECT", () => {
-    render(
-      <ResultDisplay
-        result={correctResult}
-        landmarkName="Test Landmark"
-        onPlayAgain={mockOnPlayAgain}
-      />,
-    );
-
-    expect(screen.getByText("Correct!")).toBeInTheDocument();
-  });
-
-  it("displays correct correctness text for CLOSE", () => {
-    const closeResult = {
-      ...correctResult,
-      correctness: "CLOSE" as const,
-      distanceKm: 200,
-    };
-
-    render(
-      <ResultDisplay
-        result={closeResult}
-        landmarkName="Test Landmark"
-        onPlayAgain={mockOnPlayAgain}
-      />,
-    );
-
-    expect(screen.getByText("Close!")).toBeInTheDocument();
-  });
-
-  it("displays correct correctness text for INCORRECT", () => {
-    const incorrectResult = {
-      ...correctResult,
-      correctness: "INCORRECT" as const,
-      distanceKm: 1500,
-    };
-
-    render(
-      <ResultDisplay
-        result={incorrectResult}
-        landmarkName="Test Landmark"
-        onPlayAgain={mockOnPlayAgain}
-      />,
-    );
-
-    expect(screen.getByText("Incorrect")).toBeInTheDocument();
-  });
-
-  it("displays distance with 2 decimal places", () => {
-    render(
-      <ResultDisplay
-        result={correctResult}
-        landmarkName="Test Landmark"
-        onPlayAgain={mockOnPlayAgain}
-      />,
-    );
-
-    expect(screen.getByText(/0.50 km/)).toBeInTheDocument();
-  });
-
-  it("displays landmark name", () => {
+  it("renders landmark name as title", () => {
     render(
       <ResultDisplay
         result={correctResult}
@@ -96,6 +24,50 @@ describe("ResultDisplay", () => {
     );
 
     expect(screen.getByText("Eiffel Tower")).toBeInTheDocument();
+  });
+
+  it("landmark name is a link to Wikipedia", () => {
+    render(
+      <ResultDisplay
+        result={correctResult}
+        landmarkName="Test Landmark"
+        onPlayAgain={mockOnPlayAgain}
+      />,
+    );
+
+    const link = screen.getByRole("link", { name: "Test Landmark" });
+    expect(link).toHaveAttribute("href", "https://example.com/wiki");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  it("displays distance without decimal places", () => {
+    render(
+      <ResultDisplay
+        result={correctResult}
+        landmarkName="Test Landmark"
+        onPlayAgain={mockOnPlayAgain}
+      />,
+    );
+
+    expect(screen.getByText("1 km away")).toBeInTheDocument();
+  });
+
+  it("displays distance for larger values", () => {
+    const farResult = {
+      ...correctResult,
+      distanceKm: 1234.56,
+    };
+
+    render(
+      <ResultDisplay
+        result={farResult}
+        landmarkName="Test Landmark"
+        onPlayAgain={mockOnPlayAgain}
+      />,
+    );
+
+    expect(screen.getByText("1235 km away")).toBeInTheDocument();
   });
 
   it("displays wiki summary", () => {
@@ -112,8 +84,8 @@ describe("ResultDisplay", () => {
     ).toBeInTheDocument();
   });
 
-  it("displays read more link with correct URL", () => {
-    render(
+  it("applies correct CSS class for CORRECT result", () => {
+    const { container } = render(
       <ResultDisplay
         result={correctResult}
         landmarkName="Test Landmark"
@@ -121,10 +93,46 @@ describe("ResultDisplay", () => {
       />,
     );
 
-    const link = screen.getByText("Read more");
-    expect(link).toHaveAttribute("href", "https://example.com/wiki");
-    expect(link).toHaveAttribute("target", "_blank");
-    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    const resultContainer = container.firstChild as HTMLElement;
+    expect(resultContainer.className).toContain("correct");
+  });
+
+  it("applies close CSS class for CLOSE result", () => {
+    const closeResult = {
+      ...correctResult,
+      correctness: "CLOSE" as const,
+      distanceKm: 200,
+    };
+
+    const { container } = render(
+      <ResultDisplay
+        result={closeResult}
+        landmarkName="Test Landmark"
+        onPlayAgain={mockOnPlayAgain}
+      />,
+    );
+
+    const resultContainer = container.firstChild as HTMLElement;
+    expect(resultContainer.className).toContain("close");
+  });
+
+  it("applies incorrect CSS class for INCORRECT result", () => {
+    const incorrectResult = {
+      ...correctResult,
+      correctness: "INCORRECT" as const,
+      distanceKm: 1500,
+    };
+
+    const { container } = render(
+      <ResultDisplay
+        result={incorrectResult}
+        landmarkName="Test Landmark"
+        onPlayAgain={mockOnPlayAgain}
+      />,
+    );
+
+    const resultContainer = container.firstChild as HTMLElement;
+    expect(resultContainer.className).toContain("incorrect");
   });
 
   it("calls onPlayAgain when Play Again button is clicked", async () => {
@@ -142,5 +150,43 @@ describe("ResultDisplay", () => {
     await user.click(button);
 
     expect(mockOnPlayAgain).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not display correctness text", () => {
+    render(
+      <ResultDisplay
+        result={correctResult}
+        landmarkName="Test Landmark"
+        onPlayAgain={mockOnPlayAgain}
+      />,
+    );
+
+    expect(screen.queryByText("Correct!")).not.toBeInTheDocument();
+    expect(screen.queryByText("Close!")).not.toBeInTheDocument();
+    expect(screen.queryByText("Incorrect")).not.toBeInTheDocument();
+  });
+
+  it("does not display Result heading", () => {
+    render(
+      <ResultDisplay
+        result={correctResult}
+        landmarkName="Test Landmark"
+        onPlayAgain={mockOnPlayAgain}
+      />,
+    );
+
+    expect(screen.queryByText("Result")).not.toBeInTheDocument();
+  });
+
+  it("does not display About heading", () => {
+    render(
+      <ResultDisplay
+        result={correctResult}
+        landmarkName="Test Landmark"
+        onPlayAgain={mockOnPlayAgain}
+      />,
+    );
+
+    expect(screen.queryByText("About")).not.toBeInTheDocument();
   });
 });
