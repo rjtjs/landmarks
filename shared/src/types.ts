@@ -26,5 +26,8 @@ export interface Landmark {
   id: string;
   name: string;
   location: LngLat;
-  wikiUrl: string;
+  detailsUrl: string;
+  images: string[];
 }
+
+export type LandmarkWithoutLocation = Omit<Landmark, "location">;

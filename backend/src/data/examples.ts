@@ -5,19 +5,33 @@ const LANDMARKS: Record<string, Landmark> = {
     id: "eiffel",
     name: "Eiffel Tower",
     location: { lng: 2.2945, lat: 48.8584 },
-    wikiUrl: "https://en.wikipedia.org/api/rest_v1/page/summary/Eiffel_Tower",
+    detailsUrl:
+      "https://en.wikipedia.org/api/rest_v1/page/summary/Eiffel_Tower",
+    images: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/800px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Tour_Eiffel_at_sunset%2C_Paris_June_2010.jpg/800px-Tour_Eiffel_at_sunset%2C_Paris_June_2010.jpg",
+    ],
   },
   taj: {
     id: "taj",
     name: "Taj Mahal",
     location: { lng: 78.0421, lat: 27.1751 },
-    wikiUrl: "https://en.wikipedia.org/api/rest_v1/page/summary/Taj_Mahal",
+    detailsUrl: "https://en.wikipedia.org/api/rest_v1/page/summary/Taj_Mahal",
+    images: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Taj_Mahal%2C_Agra%2C_India_edit3.jpg/800px-Taj_Mahal%2C_Agra%2C_India_edit3.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/800px-Taj_Mahal_%28Edited%29.jpeg",
+    ],
   },
   statueOfLiberty: {
     id: "statueOfLiberty",
     name: "Statue of Liberty",
     location: { lng: -74.0445, lat: 40.6892 },
-    wikiUrl: "https://en.wikipedia.org/api/rest_v1/page/summary/Statue_of_Liberty",
+    detailsUrl:
+      "https://en.wikipedia.org/api/rest_v1/page/summary/Statue_of_Liberty",
+    images: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Statue_of_Liberty_7.jpg/800px-Statue_of_Liberty_7.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Lady_Liberty_under_a_blue_sky_%28cropped%29.jpg/800px-Lady_Liberty_under_a_blue_sky_%28cropped%29.jpg",
+    ],
   },
 };
 

@@ -31,7 +31,9 @@ describe("Landmark routes", () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("id");
     expect(res.body).toHaveProperty("name");
-    expect(res.body).toHaveProperty("location");
+    expect(res.body).toHaveProperty("images");
+    expect(res.body).toHaveProperty("detailsUrl");
+    expect(res.body).not.toHaveProperty("location");
   });
 
   it("POST /api/landmarks/guess returns distance and wiki info", async () => {

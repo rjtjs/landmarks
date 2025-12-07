@@ -1,5 +1,10 @@
 import { Request, Response, Router } from "express";
-import { CorrectnessLevel, type Guess, type GuessResult } from "@landmarks/shared";
+import {
+  CorrectnessLevel,
+  type Guess,
+  type GuessResult,
+  type LandmarkWithoutLocation,
+} from "@landmarks/shared";
 import { getLandmarkById, getRandomLandmark } from "../data/examples";
 import { haversineDistance } from "../utils/geographic";
 import { getWikiSummary } from "../utils/landmark";
@@ -8,7 +13,11 @@ const router = Router();
 
 router.get("/random", (_req: Request, res: Response) => {
   const landmark = getRandomLandmark();
-  res.json(landmark);
+  if (!landmark) {
+    return res.status(404).json({ error: "No landmarks available" });
+  }
+  const { location: _, ...landmarkWithoutLocation } = landmark;
+  res.json(landmarkWithoutLocation as LandmarkWithoutLocation);
 });
 
 router.post("/guess", async (req: Request, res: Response) => {
@@ -23,7 +32,7 @@ router.post("/guess", async (req: Request, res: Response) => {
     landmark.location.lat,
     landmark.location.lng,
     location.lat,
-    location.lng
+    location.lng,
   );
 
   let correctness: CorrectnessLevel;
@@ -36,7 +45,7 @@ router.post("/guess", async (req: Request, res: Response) => {
   }
 
   try {
-    const wikiSummary = await getWikiSummary(landmark.wikiUrl);
+    const wikiSummary = await getWikiSummary(landmark.detailsUrl);
     const response: GuessResult = {
       correctness,
       actualLocation: landmark.location,
