@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import type { LngLat } from "@landmarks/shared";
+import styles from "./Map.module.css";
 
 interface MapProps {
   onLocationSelect: (location: LngLat) => void;
@@ -97,10 +98,5 @@ export default function Map({
     };
   }, [actualLocation]);
 
-  return (
-    <div
-      ref={mapContainer}
-      style={{ width: "100%", height: "500px", border: "1px solid #ccc" }}
-    />
-  );
+  return <div ref={mapContainer} className={styles.mapContainer} />;
 }

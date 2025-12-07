@@ -9,6 +9,7 @@ import { getRandomLandmark, submitGuess } from "./services/api";
 import Map from "./components/Map";
 import LandmarkImages from "./components/LandmarkImages";
 import ResultDisplay from "./components/ResultDisplay";
+import styles from "./App.module.css";
 
 export default function App() {
   const [landmark, setLandmark] = useState<LandmarkWithoutLocation | null>(
@@ -76,8 +77,8 @@ export default function App() {
 
   if (loading && !landmark) {
     return (
-      <div style={{ padding: "20px" }}>
-        <h1>Landmarks Guessing Game</h1>
+      <div className={styles.loadingContainer}>
+        <h1 className={styles.title}>Landmarks Guessing Game</h1>
         <p>Loading...</p>
       </div>
     );
@@ -85,27 +86,31 @@ export default function App() {
 
   if (error && !landmark) {
     return (
-      <div style={{ padding: "20px" }}>
-        <h1>Landmarks Guessing Game</h1>
-        <p style={{ color: "red" }}>Error: {error}</p>
-        <p>Make sure the backend is running on port 3000</p>
-        <button onClick={loadLandmark}>Retry</button>
+      <div className={styles.loadingContainer}>
+        <h1 className={styles.title}>Landmarks Guessing Game</h1>
+        <div className={styles.error}>
+          <p>Error: {error}</p>
+          <p>Make sure the backend is running on port 3000</p>
+        </div>
+        <button className={styles.retryButton} onClick={loadLandmark}>
+          Retry
+        </button>
       </div>
     );
   }
 
   if (!landmark) {
     return (
-      <div style={{ padding: "20px" }}>
-        <h1>Landmarks Guessing Game</h1>
+      <div className={styles.loadingContainer}>
+        <h1 className={styles.title}>Landmarks Guessing Game</h1>
         <p>No landmark loaded</p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Landmarks Guessing Game</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Landmarks Guessing Game</h1>
 
       {landmark && (
         <LandmarkImages images={landmark.images} name={landmark.name} />
@@ -123,7 +128,7 @@ export default function App() {
         <button
           onClick={handleSubmitGuess}
           disabled={loading}
-          style={{ marginTop: "10px", padding: "10px 20px", fontSize: "16px" }}
+          className={styles.submitButton}
         >
           {loading ? "Submitting..." : "Submit Guess"}
         </button>
@@ -137,7 +142,7 @@ export default function App() {
         />
       )}
 
-      {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
+      {error && <div className={styles.error}>{error}</div>}
     </div>
   );
 }

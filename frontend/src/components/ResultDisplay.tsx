@@ -1,4 +1,5 @@
 import { CorrectnessLevel, type GuessResult } from "@landmarks/shared";
+import styles from "./ResultDisplay.module.css";
 
 interface ResultDisplayProps {
   result: GuessResult;
@@ -25,39 +26,33 @@ export default function ResultDisplay({
   };
 
   return (
-    <div
-      style={{
-        marginTop: "20px",
-        padding: "20px",
-        border: "1px solid #ccc",
-        backgroundColor: "#f9f9f9",
-      }}
-    >
-      <h2>Result</h2>
-      <p>
-        <strong>Correctness:</strong> {getCorrectnessText(result.correctness)}
-      </p>
-      <p>
-        <strong>Distance:</strong> {result.distanceKm.toFixed(2)} km
-      </p>
-      <p>
-        <strong>Location:</strong> {landmarkName}
-      </p>
-      <div style={{ marginTop: "10px" }}>
-        <h3>About</h3>
-        <p>{result.wikiSummary}</p>
-        <a href={result.wikiUrl} target="_blank" rel="noopener noreferrer">
+    <div className={styles.container}>
+      <h2 className={styles.title}>Result</h2>
+      <div className={styles.infoRow}>
+        <span className={styles.label}>Correctness:</span>
+        {getCorrectnessText(result.correctness)}
+      </div>
+      <div className={styles.infoRow}>
+        <span className={styles.label}>Distance:</span>
+        {result.distanceKm.toFixed(2)} km
+      </div>
+      <div className={styles.infoRow}>
+        <span className={styles.label}>Location:</span>
+        {landmarkName}
+      </div>
+      <div className={styles.aboutSection}>
+        <h3 className={styles.aboutTitle}>About</h3>
+        <p className={styles.summary}>{result.wikiSummary}</p>
+        <a
+          href={result.wikiUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.link}
+        >
           Read more
         </a>
       </div>
-      <button
-        onClick={onPlayAgain}
-        style={{
-          marginTop: "10px",
-          padding: "10px 20px",
-          fontSize: "16px",
-        }}
-      >
+      <button onClick={onPlayAgain} className={styles.playAgainButton}>
         Play Again
       </button>
     </div>

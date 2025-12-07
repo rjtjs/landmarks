@@ -8,8 +8,8 @@ const LANDMARKS: Record<string, Landmark> = {
     detailsUrl:
       "https://en.wikipedia.org/api/rest_v1/page/summary/Eiffel_Tower",
     images: [
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/800px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Eiffeltoren_Parijs.jpg/800px-Eiffeltoren_Parijs.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/7/76/Georges_Garen_embrasement_tour_Eiffel.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/5/53/Maurice_koechlin_pylone.jpg",
     ],
   },
   taj: {
@@ -18,8 +18,8 @@ const LANDMARKS: Record<string, Landmark> = {
     location: { lng: 78.0421, lat: 27.1751 },
     detailsUrl: "https://en.wikipedia.org/api/rest_v1/page/summary/Taj_Mahal",
     images: [
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Taj_Mahal%2C_Agra%2C_India_edit3.jpg/800px-Taj_Mahal%2C_Agra%2C_India_edit3.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/800px-Taj_Mahal_%28Edited%29.jpeg",
+      "https://upload.wikimedia.org/wikipedia/commons/1/1d/Taj_Mahal_%28Edited%29.jpeg",
+      "https://upload.wikimedia.org/wikipedia/commons/9/94/Taj_Mahal_N-UP-A28-a_%28cropped%29.jpg",
     ],
   },
   statueOfLiberty: {
@@ -29,8 +29,8 @@ const LANDMARKS: Record<string, Landmark> = {
     detailsUrl:
       "https://en.wikipedia.org/api/rest_v1/page/summary/Statue_of_Liberty",
     images: [
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Statue_of_Liberty_7.jpg/800px-Statue_of_Liberty_7.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Lady_Liberty_under_a_blue_sky_%28cropped%29.jpg/800px-Lady_Liberty_under_a_blue_sky_%28cropped%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/5/57/Head_of_the_Statue_of_Liberty_on_display_in_a_park_in_Paris.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/6/6e/EdwardMoran-UnveilingTheStatueofLiberty1886Large.jpg",
     ],
   },
 };
