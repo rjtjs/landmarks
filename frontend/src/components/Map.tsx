@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import type { LngLat, PrecisionLevelType } from "@landmarks/shared";
+import { MAP_CONFIG } from "@landmarks/shared";
 import {
   getMarkerColor,
   getGuessCircleColors,
@@ -130,6 +131,17 @@ export default function Map({
       .setLngLat(actualLocation)
       .addTo(mapInstance);
 
+    if (guessLocation) {
+      const bounds = new mapboxgl.LngLatBounds();
+      bounds.extend([guessLocation.lng, guessLocation.lat]);
+      bounds.extend([actualLocation.lng, actualLocation.lat]);
+
+      mapInstance.fitBounds(bounds, {
+        padding: MAP_CONFIG.resultBoundsPadding,
+        maxZoom: MAP_CONFIG.maxZoomOnResult,
+      });
+    }
+
     return () => {
       if (actualMarker.current) {
         actualMarker.current.remove();
@@ -137,7 +149,7 @@ export default function Map({
       }
       cleanupActualLocationCircles(mapInstance);
     };
-  }, [actualLocation]);
+  }, [actualLocation, guessLocation]);
 
   return <div ref={mapContainer} className={styles.mapContainer} />;
 }

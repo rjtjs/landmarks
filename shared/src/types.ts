@@ -32,7 +32,6 @@ export const GuessResultSchema = z.object({
   distanceKm: z.number().min(0),
   wikiSummary: z.string(),
   wikiUrl: z.url(),
-  availablePrecisions: z.array(PrecisionLevelEnum),
 });
 
 export type GuessResult = z.infer<typeof GuessResultSchema>;

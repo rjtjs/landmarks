@@ -36,7 +36,6 @@ export function createGuessResult(
     wikiSummary:
       "The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France.",
     wikiUrl: "https://en.wikipedia.org/wiki/Eiffel_Tower",
-    availablePrecisions: [],
     ...overrides,
   };
 }
@@ -45,26 +44,22 @@ export const EXACT_CORRECT_RESULT = createGuessResult({
   isCorrect: true,
   achievedPrecision: PrecisionLevel.EXACT,
   distanceKm: 0.5,
-  availablePrecisions: [],
 });
 
 export const NARROW_CORRECT_RESULT = createGuessResult({
   isCorrect: true,
   achievedPrecision: PrecisionLevel.NARROW,
   distanceKm: 75,
-  availablePrecisions: [PrecisionLevel.EXACT],
 });
 
 export const VAGUE_CORRECT_RESULT = createGuessResult({
   isCorrect: true,
   achievedPrecision: PrecisionLevel.VAGUE,
   distanceKm: 200,
-  availablePrecisions: [PrecisionLevel.NARROW, PrecisionLevel.EXACT],
 });
 
 export const INCORRECT_RESULT = createGuessResult({
   isCorrect: false,
   achievedPrecision: null,
   distanceKm: 1500,
-  availablePrecisions: [],
 });

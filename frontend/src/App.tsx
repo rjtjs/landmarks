@@ -22,9 +22,6 @@ export default function App() {
   const [guessLocation, setGuessLocation] = useState<LngLat | null>(null);
   const [selectedPrecision, setSelectedPrecision] =
     useState<PrecisionLevelType>(PrecisionLevel.VAGUE);
-  const [availablePrecisions, setAvailablePrecisions] = useState<
-    PrecisionLevelType[]
-  >([PrecisionLevel.VAGUE, PrecisionLevel.NARROW, PrecisionLevel.EXACT]);
   const [result, setResult] = useState<GuessResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,9 +32,6 @@ export default function App() {
       setLandmark(savedState.landmark);
       setGuessLocation(savedState.guessLocation);
       setResult(savedState.result);
-      if (savedState.availablePrecisions) {
-        setAvailablePrecisions(savedState.availablePrecisions);
-      }
       if (savedState.selectedPrecision) {
         setSelectedPrecision(savedState.selectedPrecision);
       }
@@ -52,11 +46,10 @@ export default function App() {
         landmark,
         guessLocation,
         result,
-        availablePrecisions,
         selectedPrecision,
       });
     }
-  }, [landmark, guessLocation, result, availablePrecisions, selectedPrecision]);
+  }, [landmark, guessLocation, result, selectedPrecision]);
 
   async function loadLandmark() {
     try {
@@ -67,11 +60,6 @@ export default function App() {
       setGuessLocation(null);
       setResult(null);
       setSelectedPrecision(PrecisionLevel.VAGUE);
-      setAvailablePrecisions([
-        PrecisionLevel.VAGUE,
-        PrecisionLevel.NARROW,
-        PrecisionLevel.EXACT,
-      ]);
     } catch (err) {
       setError("Failed to load landmark");
       console.error(err);
@@ -92,16 +80,6 @@ export default function App() {
         precision: selectedPrecision,
       });
       setResult(guessResult);
-
-      if (
-        guessResult.isCorrect &&
-        guessResult.availablePrecisions?.length > 0
-      ) {
-        setAvailablePrecisions(guessResult.availablePrecisions);
-        setGuessLocation(null);
-      } else {
-        setAvailablePrecisions([]);
-      }
     } catch (err) {
       setError("Failed to submit guess");
       console.error(err);
@@ -114,18 +92,10 @@ export default function App() {
     setGuessLocation(null);
     setResult(null);
     setSelectedPrecision(PrecisionLevel.VAGUE);
-    setAvailablePrecisions([
-      PrecisionLevel.VAGUE,
-      PrecisionLevel.NARROW,
-      PrecisionLevel.EXACT,
-    ]);
     loadLandmark();
   }
 
-  const isGameEnded = !!(
-    result &&
-    (result.availablePrecisions?.length === 0 || !result.isCorrect)
-  );
+  const isGameEnded = !!result;
 
   if (loading && !landmark) {
     return (
@@ -172,8 +142,7 @@ export default function App() {
       <PrecisionSelector
         selectedPrecision={selectedPrecision}
         onPrecisionChange={setSelectedPrecision}
-        availablePrecisions={availablePrecisions}
-        disabled={!!isGameEnded}
+        disabled={isGameEnded}
       />
 
       <Map
@@ -183,7 +152,7 @@ export default function App() {
         {...(isGameEnded &&
           result && { actualLocation: result.actualLocation })}
         achievedPrecision={result?.achievedPrecision || null}
-        disabled={!!isGameEnded}
+        disabled={isGameEnded}
       />
 
       {!isGameEnded && guessLocation && (

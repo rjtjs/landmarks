@@ -49,7 +49,6 @@ describe("Landmark precision levels", () => {
     expect(body.isCorrect).toBe(true);
     expect(body.achievedPrecision).toBe(PrecisionLevel.EXACT);
     expect(body.distanceKm).toBeLessThan(PRECISION_RADII_KM.EXACT);
-    expect(body.availablePrecisions).toEqual([]);
   });
 
   it(`returns correct at NARROW precision for distance between ${PRECISION_RADII_KM.EXACT}km and ${PRECISION_RADII_KM.NARROW}km`, async () => {
@@ -71,7 +70,6 @@ describe("Landmark precision levels", () => {
     expect(body.achievedPrecision).toBe(PrecisionLevel.NARROW);
     expect(body.distanceKm).toBeGreaterThanOrEqual(PRECISION_RADII_KM.EXACT);
     expect(body.distanceKm).toBeLessThan(PRECISION_RADII_KM.NARROW);
-    expect(body.availablePrecisions).toEqual([PrecisionLevel.EXACT]);
   });
 
   it(`returns correct at VAGUE precision for distance between ${PRECISION_RADII_KM.NARROW}km and ${PRECISION_RADII_KM.VAGUE}km`, async () => {
@@ -93,10 +91,6 @@ describe("Landmark precision levels", () => {
     expect(body.achievedPrecision).toBe(PrecisionLevel.VAGUE);
     expect(body.distanceKm).toBeGreaterThanOrEqual(PRECISION_RADII_KM.NARROW);
     expect(body.distanceKm).toBeLessThan(PRECISION_RADII_KM.VAGUE);
-    expect(body.availablePrecisions).toEqual([
-      PrecisionLevel.NARROW,
-      PrecisionLevel.EXACT,
-    ]);
   });
 
   it(`returns incorrect for distance >= ${PRECISION_RADII_KM.VAGUE}km at any precision`, async () => {
@@ -117,7 +111,6 @@ describe("Landmark precision levels", () => {
     expect(body.isCorrect).toBe(false);
     expect(body.achievedPrecision).toBeNull();
     expect(body.distanceKm).toBeGreaterThanOrEqual(PRECISION_RADII_KM.VAGUE);
-    expect(body.availablePrecisions).toEqual([]);
   });
 
   it("returns exact location match with zero distance", async () => {
@@ -138,7 +131,6 @@ describe("Landmark precision levels", () => {
     expect(body.isCorrect).toBe(true);
     expect(body.achievedPrecision).toBe(PrecisionLevel.EXACT);
     expect(body.distanceKm).toBeCloseTo(0, 1);
-    expect(body.availablePrecisions).toEqual([]);
   });
 
   it("returns incorrect when EXACT precision guess is outside radius", async () => {
@@ -159,6 +151,5 @@ describe("Landmark precision levels", () => {
     expect(body.isCorrect).toBe(false);
     expect(body.achievedPrecision).toBeNull();
     expect(body.distanceKm).toBeGreaterThan(PRECISION_RADII_KM.EXACT);
-    expect(body.availablePrecisions).toEqual([]);
   });
 });

@@ -1,12 +1,11 @@
-import { Request, Response, Router } from "express";
 import {
-  PrecisionLevel,
   GuessSchema,
   PRECISION_RADII_KM,
   type GuessResult,
   type LandmarkWithoutLocation,
   type PrecisionLevelType,
 } from "@landmarks/shared";
+import { Request, Response, Router } from "express";
 import { getLandmarkById, getRandomLandmark } from "../data/examples";
 import { haversineDistance } from "../utils/geographic";
 import { getWikiSummary } from "../utils/landmark";
@@ -52,15 +51,6 @@ router.post("/guess", async (req: Request, res: Response) => {
     ? precision
     : null;
 
-  let availablePrecisions: PrecisionLevelType[] = [];
-  if (isCorrect) {
-    if (precision === PrecisionLevel.VAGUE) {
-      availablePrecisions = [PrecisionLevel.NARROW, PrecisionLevel.EXACT];
-    } else if (precision === PrecisionLevel.NARROW) {
-      availablePrecisions = [PrecisionLevel.EXACT];
-    }
-  }
-
   try {
     const wikiSummary = await getWikiSummary(landmark.detailsUrl);
     const response: GuessResult = {
@@ -70,7 +60,6 @@ router.post("/guess", async (req: Request, res: Response) => {
       distanceKm,
       wikiSummary: wikiSummary.extract,
       wikiUrl: wikiSummary.content_urls?.desktop?.page || "",
-      availablePrecisions,
     };
     res.json(response);
   } catch {

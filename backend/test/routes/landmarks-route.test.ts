@@ -59,7 +59,6 @@ describe("Landmark routes", () => {
     expect(body).toHaveProperty("actualLocation");
     expect(body).toHaveProperty("wikiSummary");
     expect(body).toHaveProperty("wikiUrl");
-    expect(body).toHaveProperty("availablePrecisions");
   });
 
   it("POST /api/landmarks/guess with invalid id returns 400", async () => {

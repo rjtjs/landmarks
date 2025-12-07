@@ -9,3 +9,8 @@ export const PRECISION_POINTS = {
   NARROW: 10,
   VAGUE: 5,
 } as const;
+
+export const MAP_CONFIG = {
+  maxZoomOnResult: 10,
+  resultBoundsPadding: 100,
+} as const;

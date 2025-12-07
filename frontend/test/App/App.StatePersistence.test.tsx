@@ -48,11 +48,6 @@ describe("App - State Persistence", () => {
       landmark: EIFFEL_TOWER_WITHOUT_LOCATION,
       guessLocation: EIFFEL_LOCATION,
       result: null,
-      availablePrecisions: [
-        PrecisionLevel.VAGUE,
-        PrecisionLevel.NARROW,
-        PrecisionLevel.EXACT,
-      ],
       selectedPrecision: PrecisionLevel.VAGUE,
     };
 
@@ -154,7 +149,6 @@ describe("App - State Persistence", () => {
       landmark: EIFFEL_TOWER_WITHOUT_LOCATION,
       guessLocation: EIFFEL_LOCATION,
       result: VAGUE_CORRECT_RESULT,
-      availablePrecisions: [PrecisionLevel.NARROW, PrecisionLevel.EXACT],
       selectedPrecision: PrecisionLevel.VAGUE,
     };
 

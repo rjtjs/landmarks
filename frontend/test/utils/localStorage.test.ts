@@ -30,11 +30,6 @@ describe("localStorage utility", () => {
         },
         guessLocation: { lng: 2.3522, lat: 48.8566 },
         result: null,
-        availablePrecisions: [
-          PrecisionLevel.VAGUE,
-          PrecisionLevel.NARROW,
-          PrecisionLevel.EXACT,
-        ],
         selectedPrecision: PrecisionLevel.VAGUE,
       };
       localStorage.setItem("gameState", JSON.stringify(gameState));
@@ -62,7 +57,7 @@ describe("localStorage utility", () => {
       expect(JSON.parse(stored!)).toBe("light");
     });
 
-    it("stores gameState with precision fields in localStorage", () => {
+    it("stores gameState with result in localStorage", () => {
       const gameState = {
         landmark: {
           id: "taj",
@@ -78,36 +73,8 @@ describe("localStorage utility", () => {
           distanceKm: 0.5,
           wikiSummary: "Test summary",
           wikiUrl: "https://example.com/wiki",
-          availablePrecisions: [],
         },
-        availablePrecisions: [],
         selectedPrecision: PrecisionLevel.EXACT,
-      };
-      setItem("gameState", gameState);
-      const stored = localStorage.getItem("gameState");
-      expect(JSON.parse(stored!)).toEqual(gameState);
-    });
-
-    it("stores gameState with retry-eligible result", () => {
-      const gameState = {
-        landmark: {
-          id: "eiffel",
-          name: "Eiffel Tower",
-          detailsUrl: "https://example.com",
-          images: ["https://example.com/eiffel.jpg"],
-        },
-        guessLocation: { lng: 2.2945, lat: 48.8584 },
-        result: {
-          isCorrect: true,
-          achievedPrecision: PrecisionLevel.VAGUE,
-          actualLocation: { lng: 2.2945, lat: 48.8584 },
-          distanceKm: 200,
-          wikiSummary: "Test summary",
-          wikiUrl: "https://example.com/wiki",
-          availablePrecisions: [PrecisionLevel.NARROW, PrecisionLevel.EXACT],
-        },
-        availablePrecisions: [PrecisionLevel.NARROW, PrecisionLevel.EXACT],
-        selectedPrecision: PrecisionLevel.VAGUE,
       };
       setItem("gameState", gameState);
       const stored = localStorage.getItem("gameState");
@@ -127,11 +94,6 @@ describe("localStorage utility", () => {
         landmark: null,
         guessLocation: null,
         result: null,
-        availablePrecisions: [
-          PrecisionLevel.VAGUE,
-          PrecisionLevel.NARROW,
-          PrecisionLevel.EXACT,
-        ],
         selectedPrecision: PrecisionLevel.VAGUE,
       };
       localStorage.setItem("gameState", JSON.stringify(gameState));

@@ -1,6 +1,6 @@
 import { render, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { PrecisionLevel } from "@landmarks/shared";
+import { PrecisionLevel, MAP_CONFIG } from "@landmarks/shared";
 import Map from "../../src/components/Map";
 
 type MapEventHandler = (event?: {
@@ -21,6 +21,7 @@ const mockMap = {
   removeSource: vi.fn(),
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
+  fitBounds: vi.fn(),
 };
 
 const mockMarker = {
@@ -243,5 +244,87 @@ describe("Map", () => {
     unmount();
 
     expect(mockMap.remove).toHaveBeenCalled();
+  });
+
+  it("fits bounds to show both guess and actual location when result is shown", async () => {
+    const guessLocation = { lng: 2.2945, lat: 48.8584 };
+    const actualLocation = { lng: 2.3, lat: 48.9 };
+
+    render(
+      <Map
+        onLocationSelect={mockOnLocationSelect}
+        guessLocation={guessLocation}
+        selectedPrecision={PrecisionLevel.VAGUE}
+        actualLocation={actualLocation}
+        achievedPrecision={PrecisionLevel.VAGUE}
+        disabled={true}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(mockMap.on).toHaveBeenCalledWith("load", expect.any(Function));
+    });
+
+    await waitFor(
+      () => {
+        expect(mockMap.fitBounds).toHaveBeenCalledWith(
+          expect.any(Object),
+          expect.objectContaining({
+            padding: MAP_CONFIG.resultBoundsPadding,
+            maxZoom: MAP_CONFIG.maxZoomOnResult,
+          }),
+        );
+      },
+      { timeout: 2000 },
+    );
+  });
+
+  it("uses correct config values for fitBounds", async () => {
+    const guessLocation = { lng: 0, lat: 0 };
+    const actualLocation = { lng: 10, lat: 10 };
+
+    render(
+      <Map
+        onLocationSelect={mockOnLocationSelect}
+        guessLocation={guessLocation}
+        selectedPrecision={PrecisionLevel.EXACT}
+        actualLocation={actualLocation}
+        achievedPrecision={PrecisionLevel.EXACT}
+        disabled={true}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(mockMap.on).toHaveBeenCalledWith("load", expect.any(Function));
+    });
+
+    await waitFor(
+      () => {
+        expect(mockMap.fitBounds).toHaveBeenCalledWith(expect.any(Object), {
+          padding: 100,
+          maxZoom: 10,
+        });
+      },
+      { timeout: 2000 },
+    );
+  });
+
+  it("does not call fitBounds when only guess location is shown", async () => {
+    render(
+      <Map
+        onLocationSelect={mockOnLocationSelect}
+        guessLocation={{ lng: 2.2945, lat: 48.8584 }}
+        selectedPrecision={PrecisionLevel.VAGUE}
+        disabled={false}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(mockMap.on).toHaveBeenCalledWith("load", expect.any(Function));
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(mockMap.fitBounds).not.toHaveBeenCalled();
   });
 });

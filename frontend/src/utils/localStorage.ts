@@ -11,7 +11,6 @@ interface GameState {
   landmark: LandmarkWithoutLocation | null;
   guessLocation: LngLat | null;
   result: GuessResult | null;
-  availablePrecisions: PrecisionLevelType[];
   selectedPrecision: PrecisionLevelType;
 }
 
