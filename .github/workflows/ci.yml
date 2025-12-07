@@ -12,15 +12,27 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Use Node.js 22.x
+      - name: setup Node.js 22.x
         uses: actions/setup-node@v3
         with:
           node-version: 22
 
-      - name: install backend dependencies
-        working-directory: backend
-        run: npm ci
+      - name: setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
 
-      - name: run backend tests
-        working-directory: backend
-        run: npm test
+      - name: install dependencies
+        run: pnpm install
+
+      - name: build shared lib
+        run: pnpm --filter @landmarks/shared build
+
+      - name: run linting
+        run: pnpm lint
+
+      - name: run type checking
+        run: pnpm typecheck
+
+      - name: run tests
+        run: pnpm test run
