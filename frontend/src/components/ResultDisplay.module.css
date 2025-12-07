@@ -26,7 +26,17 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;
-  color: var(--text-primary);
+}
+
+.titleLink {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.titleLink:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
 }
 
 .correctnessText {
@@ -51,7 +61,7 @@
   transition: color 0.2s;
   display: inline-block;
   border-bottom: 1px solid transparent;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 }
 
 .link:hover {
@@ -60,7 +70,7 @@
 }
 
 .button {
-  margin-top: 1rem;
+  margin-top: 2rem;
   padding: 0.875rem 2rem;
   font-size: 1rem;
   font-weight: 600;

@@ -29,19 +29,20 @@ export default function ResultDisplay({
     <div
       className={`${styles.container} ${getCorrectnessClass(result.correctness)}`}
     >
-      <h2 className={styles.title}>{landmarkName}</h2>
+      <h2 className={styles.title}>
+        <a
+          href={result.wikiUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.titleLink}
+        >
+          {landmarkName}
+        </a>
+      </h2>
       <p className={styles.correctnessText}>
         {result.distanceKm.toFixed(0)} km away
       </p>
       <p className={styles.summary}>{result.wikiSummary}</p>
-      <a
-        href={result.wikiUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles.link}
-      >
-        Read more
-      </a>
       <button onClick={onPlayAgain} className={styles.button}>
         Play Again
       </button>
