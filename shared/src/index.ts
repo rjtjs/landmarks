@@ -4,15 +4,15 @@ export type {
   GuessResult,
   Landmark,
   LandmarkWithoutLocation,
-  CorrectnessLevel as CorrectnessLevelType,
+  PrecisionLevel as PrecisionLevelType,
 } from "./types";
 export {
-  CorrectnessLevel,
-  CorrectnessLevelEnum,
+  PrecisionLevel,
+  PrecisionLevelEnum,
   LngLatSchema,
   GuessSchema,
   GuessResultSchema,
   LandmarkSchema,
   LandmarkWithoutLocationSchema,
 } from "./types";
-export { CORRECTNESS_DISTANCES_KM } from "./config";
+export { PRECISION_RADII_KM } from "./config";

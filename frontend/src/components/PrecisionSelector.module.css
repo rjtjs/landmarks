@@ -1,0 +1,74 @@
+.container {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.options {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  transition: all 0.2s ease;
+}
+
+.option:hover:not(.optionDisabled) {
+  border-color: var(--primary-color);
+  background: var(--hover-bg);
+}
+
+.option:has(input:checked) {
+  border-color: var(--primary-color);
+  background: var(--selected-bg);
+}
+
+.optionDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.radio {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.optionDisabled .radio {
+  cursor: not-allowed;
+}
+
+.optionLabel {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+@media (max-width: 600px) {
+  .options {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .option {
+    width: 100%;
+  }
+}

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import type { LngLat } from "@landmarks/shared";
+import type { LngLat, PrecisionLevelType } from "@landmarks/shared";
 import {
   getMarkerColor,
   getGuessCircleColors,
@@ -18,16 +18,18 @@ import styles from "./Map.module.css";
 interface MapProps {
   onLocationSelect: (location: LngLat) => void;
   guessLocation: LngLat | null;
+  selectedPrecision: PrecisionLevelType;
   actualLocation?: LngLat;
-  correctnessColor?: "red" | "yellow" | "green";
+  achievedPrecision?: PrecisionLevelType | null;
   disabled?: boolean;
 }
 
 export default function Map({
   onLocationSelect,
   guessLocation,
+  selectedPrecision,
   actualLocation,
-  correctnessColor = "red",
+  achievedPrecision = null,
   disabled = false,
 }: MapProps) {
   const mapContainer = useRef<HTMLDivElement | null>(null);
@@ -81,8 +83,8 @@ export default function Map({
     if (!map.current || !guessLocation || !mapLoaded.current) return;
 
     const mapInstance = map.current;
-    const markerColor = getMarkerColor(!!actualLocation, correctnessColor);
-    const circleColors = getGuessCircleColors(!!actualLocation, markerColor);
+    const markerColor = getMarkerColor(achievedPrecision);
+    const circleColors = getGuessCircleColors(achievedPrecision);
 
     if (guessMarker.current) {
       guessMarker.current.remove();
@@ -91,6 +93,7 @@ export default function Map({
     addGuessCircle(
       mapInstance,
       guessLocation,
+      selectedPrecision,
       circleColors.fill,
       circleColors.border,
     );
@@ -106,7 +109,7 @@ export default function Map({
       }
       cleanupGuessCircle(mapInstance);
     };
-  }, [guessLocation, correctnessColor, actualLocation]);
+  }, [guessLocation, selectedPrecision, achievedPrecision]);
 
   useEffect(() => {
     if (!map.current || !actualLocation || !mapLoaded.current) return;
@@ -121,8 +124,8 @@ export default function Map({
     addActualLocationCircles(
       mapInstance,
       actualLocation,
-      circleColors.close,
-      circleColors.correct,
+      circleColors.narrow,
+      circleColors.exact,
     );
 
     actualMarker.current = new mapboxgl.Marker({ color: "green" })

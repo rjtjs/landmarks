@@ -7,29 +7,32 @@ export const LngLatSchema = z.object({
 
 export type LngLat = z.infer<typeof LngLatSchema>;
 
+export const PrecisionLevelEnum = z.enum(["EXACT", "NARROW", "VAGUE"]);
+
+export type PrecisionLevel = z.infer<typeof PrecisionLevelEnum>;
+
+export const PrecisionLevel = {
+  EXACT: "EXACT" as const,
+  NARROW: "NARROW" as const,
+  VAGUE: "VAGUE" as const,
+} as const;
+
 export const GuessSchema = z.object({
   landmarkId: z.string().min(1),
   location: LngLatSchema,
+  precision: PrecisionLevelEnum,
 });
 
 export type Guess = z.infer<typeof GuessSchema>;
 
-export const CorrectnessLevelEnum = z.enum(["CORRECT", "CLOSE", "INCORRECT"]);
-
-export type CorrectnessLevel = z.infer<typeof CorrectnessLevelEnum>;
-
-export const CorrectnessLevel = {
-  CORRECT: "CORRECT" as const,
-  CLOSE: "CLOSE" as const,
-  INCORRECT: "INCORRECT" as const,
-} as const;
-
 export const GuessResultSchema = z.object({
-  correctness: CorrectnessLevelEnum,
+  isCorrect: z.boolean(),
+  achievedPrecision: PrecisionLevelEnum.nullable(),
   actualLocation: LngLatSchema,
   distanceKm: z.number().min(0),
   wikiSummary: z.string(),
   wikiUrl: z.url(),
+  availablePrecisions: z.array(PrecisionLevelEnum),
 });
 
 export type GuessResult = z.infer<typeof GuessResultSchema>;

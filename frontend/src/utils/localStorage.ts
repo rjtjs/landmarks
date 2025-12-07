@@ -2,6 +2,7 @@ import type {
   LandmarkWithoutLocation,
   GuessResult,
   LngLat,
+  PrecisionLevelType,
 } from "@landmarks/shared";
 
 type StorageKey = "theme" | "gameState";
@@ -10,6 +11,8 @@ interface GameState {
   landmark: LandmarkWithoutLocation | null;
   guessLocation: LngLat | null;
   result: GuessResult | null;
+  availablePrecisions: PrecisionLevelType[];
+  selectedPrecision: PrecisionLevelType;
 }
 
 type StorageValue<K extends StorageKey> = K extends "theme"

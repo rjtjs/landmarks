@@ -3,13 +3,15 @@ import type {
   LngLat,
   LandmarkWithoutLocation,
   GuessResult,
+  PrecisionLevelType,
 } from "@landmarks/shared";
-import { CorrectnessLevel } from "@landmarks/shared";
+import { PrecisionLevel } from "@landmarks/shared";
 import { getRandomLandmark, submitGuess } from "./services/api";
 import { getItem, setItem } from "./utils/localStorage";
 import Map from "./components/Map";
 import LandmarkImages from "./components/LandmarkImages";
 import ResultDisplay from "./components/ResultDisplay";
+import PrecisionSelector from "./components/PrecisionSelector";
 import ThemeToggle from "./components/ThemeToggle";
 import styles from "./App.module.css";
 
@@ -18,6 +20,11 @@ export default function App() {
     null,
   );
   const [guessLocation, setGuessLocation] = useState<LngLat | null>(null);
+  const [selectedPrecision, setSelectedPrecision] =
+    useState<PrecisionLevelType>(PrecisionLevel.VAGUE);
+  const [availablePrecisions, setAvailablePrecisions] = useState<
+    PrecisionLevelType[]
+  >([PrecisionLevel.VAGUE, PrecisionLevel.NARROW, PrecisionLevel.EXACT]);
   const [result, setResult] = useState<GuessResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,6 +35,12 @@ export default function App() {
       setLandmark(savedState.landmark);
       setGuessLocation(savedState.guessLocation);
       setResult(savedState.result);
+      if (savedState.availablePrecisions) {
+        setAvailablePrecisions(savedState.availablePrecisions);
+      }
+      if (savedState.selectedPrecision) {
+        setSelectedPrecision(savedState.selectedPrecision);
+      }
     } else {
       loadLandmark();
     }
@@ -39,9 +52,11 @@ export default function App() {
         landmark,
         guessLocation,
         result,
+        availablePrecisions,
+        selectedPrecision,
       });
     }
-  }, [landmark, guessLocation, result]);
+  }, [landmark, guessLocation, result, availablePrecisions, selectedPrecision]);
 
   async function loadLandmark() {
     try {
@@ -51,6 +66,12 @@ export default function App() {
       setLandmark(data);
       setGuessLocation(null);
       setResult(null);
+      setSelectedPrecision(PrecisionLevel.VAGUE);
+      setAvailablePrecisions([
+        PrecisionLevel.VAGUE,
+        PrecisionLevel.NARROW,
+        PrecisionLevel.EXACT,
+      ]);
     } catch (err) {
       setError("Failed to load landmark");
       console.error(err);
@@ -68,8 +89,16 @@ export default function App() {
       const guessResult = await submitGuess({
         landmarkId: landmark.id,
         location: guessLocation,
+        precision: selectedPrecision,
       });
       setResult(guessResult);
+
+      if (guessResult.isCorrect && guessResult.availablePrecisions.length > 0) {
+        setAvailablePrecisions(guessResult.availablePrecisions);
+        setGuessLocation(null);
+      } else {
+        setAvailablePrecisions([]);
+      }
     } catch (err) {
       setError("Failed to submit guess");
       console.error(err);
@@ -78,23 +107,22 @@ export default function App() {
     }
   }
 
-  function getMarkerColor(correctness: string): "red" | "yellow" | "green" {
-    switch (correctness) {
-      case CorrectnessLevel.CORRECT:
-        return "green";
-      case CorrectnessLevel.CLOSE:
-        return "yellow";
-      case CorrectnessLevel.INCORRECT:
-      default:
-        return "red";
-    }
-  }
-
   function handlePlayAgain() {
     setGuessLocation(null);
     setResult(null);
+    setSelectedPrecision(PrecisionLevel.VAGUE);
+    setAvailablePrecisions([
+      PrecisionLevel.VAGUE,
+      PrecisionLevel.NARROW,
+      PrecisionLevel.EXACT,
+    ]);
     loadLandmark();
   }
+
+  const isGameEnded = !!(
+    result &&
+    (result.availablePrecisions.length === 0 || !result.isCorrect)
+  );
 
   if (loading && !landmark) {
     return (
@@ -138,15 +166,24 @@ export default function App() {
         <LandmarkImages images={landmark.images} name={landmark.name} />
       )}
 
+      <PrecisionSelector
+        selectedPrecision={selectedPrecision}
+        onPrecisionChange={setSelectedPrecision}
+        availablePrecisions={availablePrecisions}
+        disabled={!!isGameEnded}
+      />
+
       <Map
         onLocationSelect={setGuessLocation}
         guessLocation={guessLocation}
-        {...(result && { actualLocation: result.actualLocation })}
-        correctnessColor={result ? getMarkerColor(result.correctness) : "red"}
-        disabled={!!result}
+        selectedPrecision={selectedPrecision}
+        {...(isGameEnded &&
+          result && { actualLocation: result.actualLocation })}
+        achievedPrecision={result?.achievedPrecision || null}
+        disabled={!!isGameEnded}
       />
 
-      {!result && guessLocation && (
+      {!isGameEnded && guessLocation && (
         <button
           onClick={handleSubmitGuess}
           disabled={loading}
@@ -161,6 +198,7 @@ export default function App() {
           result={result}
           landmarkName={landmark.name}
           onPlayAgain={handlePlayAgain}
+          showPlayAgain={isGameEnded}
         />
       )}
 

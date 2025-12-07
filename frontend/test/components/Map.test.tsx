@@ -1,5 +1,6 @@
 import { render, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { PrecisionLevel } from "@landmarks/shared";
 import Map from "../../src/components/Map";
 
 type MapEventHandler = (event?: {
@@ -54,6 +55,7 @@ describe("Map", () => {
       <Map
         onLocationSelect={mockOnLocationSelect}
         guessLocation={null}
+        selectedPrecision={PrecisionLevel.VAGUE}
         disabled={false}
       />,
     );
@@ -74,6 +76,7 @@ describe("Map", () => {
       <Map
         onLocationSelect={mockOnLocationSelect}
         guessLocation={null}
+        selectedPrecision={PrecisionLevel.VAGUE}
         disabled={false}
       />,
     );
@@ -88,6 +91,7 @@ describe("Map", () => {
       <Map
         onLocationSelect={mockOnLocationSelect}
         guessLocation={null}
+        selectedPrecision={PrecisionLevel.VAGUE}
         disabled={false}
       />,
     );
@@ -119,6 +123,7 @@ describe("Map", () => {
       <Map
         onLocationSelect={mockOnLocationSelect}
         guessLocation={null}
+        selectedPrecision={PrecisionLevel.VAGUE}
         disabled={true}
       />,
     );
@@ -145,6 +150,7 @@ describe("Map", () => {
       <Map
         onLocationSelect={mockOnLocationSelect}
         guessLocation={{ lng: 2.2945, lat: 48.8584 }}
+        selectedPrecision={PrecisionLevel.VAGUE}
         disabled={false}
       />,
     );
@@ -171,7 +177,9 @@ describe("Map", () => {
       <Map
         onLocationSelect={mockOnLocationSelect}
         guessLocation={{ lng: 2.2945, lat: 48.8584 }}
+        selectedPrecision={PrecisionLevel.EXACT}
         actualLocation={{ lng: 2.3, lat: 48.9 }}
+        achievedPrecision={PrecisionLevel.EXACT}
         disabled={true}
       />,
     );
@@ -190,15 +198,16 @@ describe("Map", () => {
     );
   });
 
-  it("uses correctnessColor for guess marker when actualLocation exists", async () => {
+  it("uses achievedPrecision color for guess marker", async () => {
     const mapboxgl = await import("mapbox-gl");
 
     render(
       <Map
         onLocationSelect={mockOnLocationSelect}
         guessLocation={{ lng: 2.2945, lat: 48.8584 }}
+        selectedPrecision={PrecisionLevel.NARROW}
         actualLocation={{ lng: 2.3, lat: 48.9 }}
-        correctnessColor="yellow"
+        achievedPrecision={PrecisionLevel.NARROW}
         disabled={false}
       />,
     );
@@ -222,6 +231,7 @@ describe("Map", () => {
       <Map
         onLocationSelect={mockOnLocationSelect}
         guessLocation={null}
+        selectedPrecision={PrecisionLevel.VAGUE}
         disabled={false}
       />,
     );
