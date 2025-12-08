@@ -232,14 +232,14 @@ describe("Map", () => {
     await waitFor(
       () => {
         expect(mockMap.fitBounds).toHaveBeenCalled();
-        const fitBoundsCall = mockMap.fitBounds.mock.calls[0];
-        expect(fitBoundsCall[1]).toEqual({
-          padding: MAP_CONFIG.resultBoundsPadding,
-          maxZoom: MAP_CONFIG.maxZoomOnResult,
-        });
       },
       { timeout: 2000 },
     );
+
+    expect(mockMap.fitBounds.mock.calls[0]?.[1]).toEqual({
+      padding: MAP_CONFIG.resultBoundsPadding,
+      maxZoom: MAP_CONFIG.maxZoomOnResult,
+    });
   });
 
   it("uses correct config values for fitBounds", async () => {
@@ -260,14 +260,14 @@ describe("Map", () => {
     await waitFor(
       () => {
         expect(mockMap.fitBounds).toHaveBeenCalled();
-        const fitBoundsCall = mockMap.fitBounds.mock.calls[0];
-        expect(fitBoundsCall[1]).toEqual({
-          padding: 100,
-          maxZoom: 10,
-        });
       },
       { timeout: 2000 },
     );
+
+    expect(mockMap.fitBounds.mock.calls[0]?.[1]).toEqual({
+      padding: 100,
+      maxZoom: 10,
+    });
   });
 
   it("does not call fitBounds when only guess location is shown", async () => {

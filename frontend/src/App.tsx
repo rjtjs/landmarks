@@ -145,7 +145,9 @@ export default function App() {
         onLocationSelect={setGuessLocation}
         guessLocation={guessLocation}
         selectedPrecision={selectedPrecision}
-        actualLocation={result?.actualLocation}
+        {...(result?.actualLocation && {
+          actualLocation: result.actualLocation,
+        })}
         achievedPrecision={result?.achievedPrecision || null}
         disabled={isGameEnded}
       />
