@@ -7,7 +7,7 @@ type MapEventHandler = (event?: {
 export const mockMap = {
   on: vi.fn((event: string, handler: MapEventHandler) => {
     if (event === "load") {
-      setTimeout(() => handler(), 0);
+      handler();
     }
   }),
   off: vi.fn(),

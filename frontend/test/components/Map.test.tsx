@@ -2,37 +2,7 @@ import { render, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { PrecisionLevel, MAP_CONFIG } from "@landmarks/shared";
 import Map from "../../src/components/Map";
-
-type MapEventHandler = (event?: {
-  lngLat: { lng: number; lat: number };
-}) => void;
-
-const mockMap = {
-  on: vi.fn((event: string, handler: MapEventHandler) => {
-    if (event === "load") {
-      handler();
-    }
-  }),
-  off: vi.fn(),
-  remove: vi.fn(),
-  getCanvas: vi.fn(() => document.createElement("canvas")),
-  getSource: vi.fn(() => null),
-  addSource: vi.fn(),
-  removeSource: vi.fn(),
-  addLayer: vi.fn(),
-  removeLayer: vi.fn(),
-  fitBounds: vi.fn(),
-};
-
-const mockMarker = {
-  setLngLat: vi.fn().mockReturnThis(),
-  addTo: vi.fn().mockReturnThis(),
-  remove: vi.fn(),
-};
-
-const mockLngLatBounds = {
-  extend: vi.fn().mockReturnThis(),
-};
+import { mockMap, mockMarker, mockLngLatBounds } from "../helpers/mapMocks";
 
 vi.mock("mapbox-gl", () => ({
   default: {
@@ -317,5 +287,20 @@ describe("Map", () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(mockMap.fitBounds).not.toHaveBeenCalled();
+  });
+
+  it("registers load event handler on map initialization", async () => {
+    render(
+      <Map
+        onLocationSelect={mockOnLocationSelect}
+        guessLocation={null}
+        selectedPrecision={PrecisionLevel.VAGUE}
+        disabled={false}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(mockMap.on).toHaveBeenCalledWith("load", expect.any(Function));
+    });
   });
 });
