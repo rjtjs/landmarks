@@ -35,6 +35,7 @@ export default function Map({
 }: MapProps) {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const mapLoaded = useRef(false);
   const guessMarker = useRef<mapboxgl.Marker | null>(null);
   const actualMarker = useRef<mapboxgl.Marker | null>(null);
 
@@ -51,24 +52,36 @@ export default function Map({
       zoom: 1.5,
     });
 
-    const handleClick = (e: mapboxgl.MapMouseEvent) => {
-      if (!disabled) {
-        onLocationSelect({ lng: e.lngLat.lng, lat: e.lngLat.lat });
-      }
-    };
-
-    map.current.on("click", handleClick);
+    map.current.on("load", () => {
+      mapLoaded.current = true;
+    });
 
     return () => {
       if (map.current) {
         map.current.remove();
         map.current = null;
+        mapLoaded.current = false;
       }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!map.current) return;
+
+    const handleClick = (e: mapboxgl.MapMouseEvent) => {
+      if (disabled) return;
+      onLocationSelect({ lng: e.lngLat.lng, lat: e.lngLat.lat });
+    };
+
+    map.current.on("click", handleClick);
+
+    return () => {
+      map.current?.off("click", handleClick);
     };
   }, [disabled, onLocationSelect]);
 
   useEffect(() => {
-    if (!map.current || !guessLocation) return;
+    if (!map.current || !guessLocation || !mapLoaded.current) return;
 
     const mapInstance = map.current;
     const markerColor = getMarkerColor(achievedPrecision, !!actualLocation);
@@ -99,7 +112,7 @@ export default function Map({
   }, [guessLocation, selectedPrecision, achievedPrecision, actualLocation]);
 
   useEffect(() => {
-    if (!map.current || !actualLocation) return;
+    if (!map.current || !actualLocation || !mapLoaded.current) return;
 
     const mapInstance = map.current;
     const circleColors = getActualLocationCircleColors();
