@@ -37,7 +37,6 @@ export default function Map({
   const map = useRef<mapboxgl.Map | null>(null);
   const guessMarker = useRef<mapboxgl.Marker | null>(null);
   const actualMarker = useRef<mapboxgl.Marker | null>(null);
-  const mapLoaded = useRef(false);
 
   useEffect(() => {
     if (map.current || !mapContainer.current) return;
@@ -52,36 +51,24 @@ export default function Map({
       zoom: 1.5,
     });
 
-    map.current.on("load", () => {
-      mapLoaded.current = true;
-    });
-
-    return () => {
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
-        mapLoaded.current = false;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!map.current) return;
-
     const handleClick = (e: mapboxgl.MapMouseEvent) => {
-      if (disabled) return;
-      onLocationSelect({ lng: e.lngLat.lng, lat: e.lngLat.lat });
+      if (!disabled) {
+        onLocationSelect({ lng: e.lngLat.lng, lat: e.lngLat.lat });
+      }
     };
 
     map.current.on("click", handleClick);
 
     return () => {
-      map.current?.off("click", handleClick);
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
     };
   }, [disabled, onLocationSelect]);
 
   useEffect(() => {
-    if (!map.current || !guessLocation || !mapLoaded.current) return;
+    if (!map.current || !guessLocation) return;
 
     const mapInstance = map.current;
     const markerColor = getMarkerColor(achievedPrecision, !!actualLocation);
@@ -90,9 +77,8 @@ export default function Map({
       !!actualLocation,
     );
 
-    if (guessMarker.current) {
-      guessMarker.current.remove();
-    }
+    guessMarker.current?.remove();
+    cleanupGuessCircle(mapInstance);
 
     addGuessCircle(
       mapInstance,
@@ -107,23 +93,19 @@ export default function Map({
       .addTo(mapInstance);
 
     return () => {
-      if (guessMarker.current) {
-        guessMarker.current.remove();
-        guessMarker.current = null;
-      }
+      guessMarker.current?.remove();
       cleanupGuessCircle(mapInstance);
     };
   }, [guessLocation, selectedPrecision, achievedPrecision, actualLocation]);
 
   useEffect(() => {
-    if (!map.current || !actualLocation || !mapLoaded.current) return;
+    if (!map.current || !actualLocation) return;
 
     const mapInstance = map.current;
     const circleColors = getActualLocationCircleColors();
 
-    if (actualMarker.current) {
-      actualMarker.current.remove();
-    }
+    actualMarker.current?.remove();
+    cleanupActualLocationCircles(mapInstance);
 
     addActualLocationCircles(mapInstance, actualLocation, circleColors.exact);
 
@@ -143,10 +125,7 @@ export default function Map({
     }
 
     return () => {
-      if (actualMarker.current) {
-        actualMarker.current.remove();
-        actualMarker.current = null;
-      }
+      actualMarker.current?.remove();
       cleanupActualLocationCircles(mapInstance);
     };
   }, [actualLocation, guessLocation]);

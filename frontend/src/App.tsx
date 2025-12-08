@@ -7,7 +7,7 @@ import type {
 } from "@landmarks/shared";
 import { PrecisionLevel } from "@landmarks/shared";
 import { getRandomLandmark, submitGuess } from "./services/api";
-import { getItem, setItem } from "./utils/localStorage";
+import { getGameState, setGameState } from "./utils/localStorage";
 import Map from "./components/Map";
 import LandmarkImages from "./components/LandmarkImages";
 import ResultDisplay from "./components/ResultDisplay";
@@ -27,14 +27,12 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const savedState = getItem("gameState");
-    if (savedState && savedState.landmark) {
+    const savedState = getGameState();
+    if (savedState?.landmark) {
       setLandmark(savedState.landmark);
       setGuessLocation(savedState.guessLocation);
       setResult(savedState.result);
-      if (savedState.selectedPrecision) {
-        setSelectedPrecision(savedState.selectedPrecision);
-      }
+      setSelectedPrecision(savedState.selectedPrecision);
     } else {
       loadLandmark();
     }
@@ -42,7 +40,7 @@ export default function App() {
 
   useEffect(() => {
     if (landmark) {
-      setItem("gameState", {
+      setGameState({
         landmark,
         guessLocation,
         result,
@@ -135,9 +133,7 @@ export default function App() {
       <ThemeToggle />
       <h1 className={styles.title}>Where in the World?</h1>
 
-      {landmark && (
-        <LandmarkImages images={landmark.images} name={landmark.name} />
-      )}
+      <LandmarkImages images={landmark.images} name={landmark.name} />
 
       <PrecisionSelector
         selectedPrecision={selectedPrecision}
@@ -149,8 +145,7 @@ export default function App() {
         onLocationSelect={setGuessLocation}
         guessLocation={guessLocation}
         selectedPrecision={selectedPrecision}
-        {...(isGameEnded &&
-          result && { actualLocation: result.actualLocation })}
+        actualLocation={result?.actualLocation}
         achievedPrecision={result?.achievedPrecision || null}
         disabled={isGameEnded}
       />
@@ -165,12 +160,11 @@ export default function App() {
         </button>
       )}
 
-      {result && landmark && (
+      {result && (
         <ResultDisplay
           result={result}
           landmarkName={landmark.name}
           onPlayAgain={handlePlayAgain}
-          showPlayAgain={isGameEnded}
         />
       )}
 

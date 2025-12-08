@@ -18,12 +18,17 @@ export const mockMap = {
   removeSource: vi.fn(),
   addLayer: vi.fn(),
   removeLayer: vi.fn(),
+  fitBounds: vi.fn(),
 };
 
 export const mockMarker = {
   setLngLat: vi.fn().mockReturnThis(),
   addTo: vi.fn().mockReturnThis(),
   remove: vi.fn(),
+};
+
+export const mockLngLatBounds = {
+  extend: vi.fn().mockReturnThis(),
 };
 
 export function simulateMapClick(lng: number, lat: number) {

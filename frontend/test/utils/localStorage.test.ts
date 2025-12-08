@@ -1,6 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { PrecisionLevel } from "@landmarks/shared";
-import { getItem, setItem, removeItem } from "../../src/utils/localStorage";
+import {
+  getGameState,
+  setGameState,
+  removeGameState,
+  getTheme,
+  setTheme,
+  removeTheme,
+} from "../../src/utils/localStorage";
 
 describe("localStorage utility", () => {
   beforeEach(() => {
@@ -8,19 +15,46 @@ describe("localStorage utility", () => {
     vi.clearAllMocks();
   });
 
-  describe("getItem", () => {
-    it("returns null when key does not exist", () => {
-      const result = getItem("theme");
-      expect(result).toBeNull();
+  describe("theme", () => {
+    it("returns null when theme does not exist", () => {
+      expect(getTheme()).toBeNull();
     });
 
-    it("retrieves and parses theme from localStorage", () => {
+    it("retrieves theme from localStorage", () => {
       localStorage.setItem("theme", JSON.stringify("dark"));
-      const result = getItem("theme");
-      expect(result).toBe("dark");
+      expect(getTheme()).toBe("dark");
     });
 
-    it("retrieves and parses gameState from localStorage", () => {
+    it("stores theme in localStorage", () => {
+      setTheme("light");
+      const stored = localStorage.getItem("theme");
+      expect(JSON.parse(stored!)).toBe("light");
+    });
+
+    it("removes theme from localStorage", () => {
+      localStorage.setItem("theme", JSON.stringify("dark"));
+      removeTheme();
+      expect(localStorage.getItem("theme")).toBeNull();
+    });
+
+    it("returns null for invalid theme JSON", () => {
+      localStorage.setItem("theme", "invalid-json");
+      expect(getTheme()).toBeNull();
+    });
+
+    it("removes corrupted theme data", () => {
+      localStorage.setItem("theme", "invalid-json");
+      getTheme();
+      expect(localStorage.getItem("theme")).toBeNull();
+    });
+  });
+
+  describe("gameState", () => {
+    it("returns null when gameState does not exist", () => {
+      expect(getGameState()).toBeNull();
+    });
+
+    it("retrieves gameState from localStorage", () => {
       const gameState = {
         landmark: {
           id: "test",
@@ -33,31 +67,10 @@ describe("localStorage utility", () => {
         selectedPrecision: PrecisionLevel.VAGUE,
       };
       localStorage.setItem("gameState", JSON.stringify(gameState));
-      const result = getItem("gameState");
-      expect(result).toEqual(gameState);
+      expect(getGameState()).toEqual(gameState);
     });
 
-    it("returns null when localStorage contains invalid JSON", () => {
-      localStorage.setItem("theme", "invalid-json");
-      const result = getItem("theme");
-      expect(result).toBeNull();
-    });
-
-    it("removes corrupted data from localStorage", () => {
-      localStorage.setItem("theme", "invalid-json");
-      getItem("theme");
-      expect(localStorage.getItem("theme")).toBeNull();
-    });
-  });
-
-  describe("setItem", () => {
-    it("stores theme in localStorage", () => {
-      setItem("theme", "light");
-      const stored = localStorage.getItem("theme");
-      expect(JSON.parse(stored!)).toBe("light");
-    });
-
-    it("stores gameState with result in localStorage", () => {
+    it("stores gameState in localStorage", () => {
       const gameState = {
         landmark: {
           id: "taj",
@@ -76,17 +89,9 @@ describe("localStorage utility", () => {
         },
         selectedPrecision: PrecisionLevel.EXACT,
       };
-      setItem("gameState", gameState);
+      setGameState(gameState);
       const stored = localStorage.getItem("gameState");
       expect(JSON.parse(stored!)).toEqual(gameState);
-    });
-  });
-
-  describe("removeItem", () => {
-    it("removes theme from localStorage", () => {
-      localStorage.setItem("theme", JSON.stringify("dark"));
-      removeItem("theme");
-      expect(localStorage.getItem("theme")).toBeNull();
     });
 
     it("removes gameState from localStorage", () => {
@@ -97,7 +102,18 @@ describe("localStorage utility", () => {
         selectedPrecision: PrecisionLevel.VAGUE,
       };
       localStorage.setItem("gameState", JSON.stringify(gameState));
-      removeItem("gameState");
+      removeGameState();
+      expect(localStorage.getItem("gameState")).toBeNull();
+    });
+
+    it("returns null for invalid gameState JSON", () => {
+      localStorage.setItem("gameState", "invalid-json");
+      expect(getGameState()).toBeNull();
+    });
+
+    it("removes corrupted gameState data", () => {
+      localStorage.setItem("gameState", "invalid-json");
+      getGameState();
       expect(localStorage.getItem("gameState")).toBeNull();
     });
   });

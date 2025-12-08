@@ -5,7 +5,12 @@ import { PrecisionLevel } from "@landmarks/shared";
 import App from "../../src/App";
 import * as api from "../../src/services/api";
 import * as localStorageUtils from "../../src/utils/localStorage";
-import { mockMap, mockMarker, simulateMapClick } from "../helpers/mapMocks";
+import {
+  mockMap,
+  mockMarker,
+  mockLngLatBounds,
+  simulateMapClick,
+} from "../helpers/mapMocks";
 import {
   EIFFEL_TOWER_WITHOUT_LOCATION,
   EXACT_CORRECT_RESULT,
@@ -21,6 +26,9 @@ vi.mock("mapbox-gl", () => ({
     }),
     Marker: vi.fn(function Marker() {
       return mockMarker;
+    }),
+    LngLatBounds: vi.fn(function LngLatBounds() {
+      return mockLngLatBounds;
     }),
   },
 }));
@@ -51,7 +59,7 @@ describe("App - State Persistence", () => {
       selectedPrecision: PrecisionLevel.VAGUE,
     };
 
-    vi.spyOn(localStorageUtils, "getItem").mockReturnValue(savedState);
+    vi.spyOn(localStorageUtils, "getGameState").mockReturnValue(savedState);
 
     render(<App />);
 
@@ -63,7 +71,7 @@ describe("App - State Persistence", () => {
   });
 
   it("loads new landmark when no saved state exists", async () => {
-    vi.spyOn(localStorageUtils, "getItem").mockReturnValue(null);
+    vi.spyOn(localStorageUtils, "getGameState").mockReturnValue(null);
 
     render(<App />);
 
@@ -73,7 +81,7 @@ describe("App - State Persistence", () => {
   });
 
   it("persists game state to localStorage when landmark is loaded", async () => {
-    const setItemSpy = vi.spyOn(localStorageUtils, "setItem");
+    const setGameStateSpy = vi.spyOn(localStorageUtils, "setGameState");
 
     render(<App />);
 
@@ -82,8 +90,7 @@ describe("App - State Persistence", () => {
     });
 
     await waitFor(() => {
-      expect(setItemSpy).toHaveBeenCalledWith(
-        "gameState",
+      expect(setGameStateSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           landmark: EIFFEL_TOWER_WITHOUT_LOCATION,
           guessLocation: null,
@@ -94,7 +101,7 @@ describe("App - State Persistence", () => {
   });
 
   it("persists game state when guess location is selected", async () => {
-    const setItemSpy = vi.spyOn(localStorageUtils, "setItem");
+    const setGameStateSpy = vi.spyOn(localStorageUtils, "setGameState");
 
     render(<App />);
 
@@ -105,8 +112,7 @@ describe("App - State Persistence", () => {
     simulateMapClick(EIFFEL_LOCATION.lng, EIFFEL_LOCATION.lat);
 
     await waitFor(() => {
-      expect(setItemSpy).toHaveBeenCalledWith(
-        "gameState",
+      expect(setGameStateSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           guessLocation: EIFFEL_LOCATION,
         }),
@@ -116,7 +122,7 @@ describe("App - State Persistence", () => {
 
   it("persists game state with result after submitting guess", async () => {
     const user = userEvent.setup();
-    const setItemSpy = vi.spyOn(localStorageUtils, "setItem");
+    const setGameStateSpy = vi.spyOn(localStorageUtils, "setGameState");
 
     vi.mocked(api.submitGuess).mockResolvedValue(EXACT_CORRECT_RESULT);
 
@@ -135,8 +141,7 @@ describe("App - State Persistence", () => {
     await user.click(screen.getByText("Submit Guess"));
 
     await waitFor(() => {
-      expect(setItemSpy).toHaveBeenCalledWith(
-        "gameState",
+      expect(setGameStateSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           result: EXACT_CORRECT_RESULT,
         }),
@@ -152,7 +157,7 @@ describe("App - State Persistence", () => {
       selectedPrecision: PrecisionLevel.VAGUE,
     };
 
-    vi.spyOn(localStorageUtils, "getItem").mockReturnValue(savedState);
+    vi.spyOn(localStorageUtils, "getGameState").mockReturnValue(savedState);
 
     render(<App />);
 

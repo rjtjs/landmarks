@@ -30,6 +30,10 @@ const mockMarker = {
   remove: vi.fn(),
 };
 
+const mockLngLatBounds = {
+  extend: vi.fn().mockReturnThis(),
+};
+
 vi.mock("mapbox-gl", () => ({
   default: {
     accessToken: "",
@@ -38,6 +42,9 @@ vi.mock("mapbox-gl", () => ({
     }),
     Marker: vi.fn(function Marker() {
       return mockMarker;
+    }),
+    LngLatBounds: vi.fn(function LngLatBounds() {
+      return mockLngLatBounds;
     }),
   },
 }));
@@ -156,10 +163,6 @@ describe("Map", () => {
       />,
     );
 
-    await waitFor(() => {
-      expect(mockMap.on).toHaveBeenCalledWith("load", expect.any(Function));
-    });
-
     await waitFor(
       () => {
         expect(mapboxgl.default.Marker).toHaveBeenCalledWith({
@@ -173,6 +176,7 @@ describe("Map", () => {
 
   it("creates actual location marker when actualLocation is provided", async () => {
     const mapboxgl = await import("mapbox-gl");
+    const MockedMarker = vi.mocked(mapboxgl.default.Marker);
 
     render(
       <Map
@@ -185,15 +189,12 @@ describe("Map", () => {
       />,
     );
 
-    await waitFor(() => {
-      expect(mockMap.on).toHaveBeenCalledWith("load", expect.any(Function));
-    });
-
     await waitFor(
       () => {
-        expect(mapboxgl.default.Marker).toHaveBeenCalledWith({
-          color: "green",
-        });
+        expect(MockedMarker.mock.calls.length).toBeGreaterThanOrEqual(2);
+        expect(
+          MockedMarker.mock.calls.some((call) => call[0]?.color === "green"),
+        ).toBe(true);
       },
       { timeout: 2000 },
     );
@@ -201,6 +202,7 @@ describe("Map", () => {
 
   it("uses achievedPrecision color for guess marker", async () => {
     const mapboxgl = await import("mapbox-gl");
+    const MockedMarker = vi.mocked(mapboxgl.default.Marker);
 
     render(
       <Map
@@ -213,15 +215,11 @@ describe("Map", () => {
       />,
     );
 
-    await waitFor(() => {
-      expect(mockMap.on).toHaveBeenCalledWith("load", expect.any(Function));
-    });
-
     await waitFor(
       () => {
-        expect(mapboxgl.default.Marker).toHaveBeenCalledWith({
-          color: "yellow",
-        });
+        expect(
+          MockedMarker.mock.calls.some((call) => call[0]?.color === "yellow"),
+        ).toBe(true);
       },
       { timeout: 2000 },
     );
@@ -261,19 +259,14 @@ describe("Map", () => {
       />,
     );
 
-    await waitFor(() => {
-      expect(mockMap.on).toHaveBeenCalledWith("load", expect.any(Function));
-    });
-
     await waitFor(
       () => {
-        expect(mockMap.fitBounds).toHaveBeenCalledWith(
-          expect.any(Object),
-          expect.objectContaining({
-            padding: MAP_CONFIG.resultBoundsPadding,
-            maxZoom: MAP_CONFIG.maxZoomOnResult,
-          }),
-        );
+        expect(mockMap.fitBounds).toHaveBeenCalled();
+        const fitBoundsCall = mockMap.fitBounds.mock.calls[0];
+        expect(fitBoundsCall[1]).toEqual({
+          padding: MAP_CONFIG.resultBoundsPadding,
+          maxZoom: MAP_CONFIG.maxZoomOnResult,
+        });
       },
       { timeout: 2000 },
     );
@@ -294,13 +287,11 @@ describe("Map", () => {
       />,
     );
 
-    await waitFor(() => {
-      expect(mockMap.on).toHaveBeenCalledWith("load", expect.any(Function));
-    });
-
     await waitFor(
       () => {
-        expect(mockMap.fitBounds).toHaveBeenCalledWith(expect.any(Object), {
+        expect(mockMap.fitBounds).toHaveBeenCalled();
+        const fitBoundsCall = mockMap.fitBounds.mock.calls[0];
+        expect(fitBoundsCall[1]).toEqual({
           padding: 100,
           maxZoom: 10,
         });
@@ -320,7 +311,7 @@ describe("Map", () => {
     );
 
     await waitFor(() => {
-      expect(mockMap.on).toHaveBeenCalledWith("load", expect.any(Function));
+      expect(mockMap.on).toHaveBeenCalledWith("click", expect.any(Function));
     });
 
     await new Promise((resolve) => setTimeout(resolve, 100));

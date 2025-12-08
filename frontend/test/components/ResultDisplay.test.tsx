@@ -18,7 +18,6 @@ describe("ResultDisplay", () => {
         result={EXACT_CORRECT_RESULT}
         landmarkName="Eiffel Tower"
         onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
       />,
     );
 
@@ -31,7 +30,6 @@ describe("ResultDisplay", () => {
         result={EXACT_CORRECT_RESULT}
         landmarkName="Eiffel Tower"
         onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
       />,
     );
 
@@ -50,7 +48,6 @@ describe("ResultDisplay", () => {
         result={EXACT_CORRECT_RESULT}
         landmarkName="Eiffel Tower"
         onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
       />,
     );
 
@@ -64,7 +61,6 @@ describe("ResultDisplay", () => {
         result={NARROW_CORRECT_RESULT}
         landmarkName="Eiffel Tower"
         onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
       />,
     );
 
@@ -78,7 +74,6 @@ describe("ResultDisplay", () => {
         result={VAGUE_CORRECT_RESULT}
         landmarkName="Eiffel Tower"
         onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
       />,
     );
 
@@ -92,7 +87,6 @@ describe("ResultDisplay", () => {
         result={INCORRECT_RESULT}
         landmarkName="Eiffel Tower"
         onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
       />,
     );
 
@@ -100,30 +94,16 @@ describe("ResultDisplay", () => {
     expect(resultContainer.className).toContain("incorrect");
   });
 
-  it("shows Play Again button when showPlayAgain is true", () => {
+  it("shows Play Again button", () => {
     render(
       <ResultDisplay
         result={EXACT_CORRECT_RESULT}
         landmarkName="Eiffel Tower"
         onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
       />,
     );
 
     expect(screen.getByText("Play Again")).toBeInTheDocument();
-  });
-
-  it("does not show Play Again button when showPlayAgain is false", () => {
-    render(
-      <ResultDisplay
-        result={VAGUE_CORRECT_RESULT}
-        landmarkName="Eiffel Tower"
-        onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={false}
-      />,
-    );
-
-    expect(screen.queryByText("Play Again")).not.toBeInTheDocument();
   });
 
   it("calls onPlayAgain when Play Again button is clicked", async () => {
@@ -134,7 +114,6 @@ describe("ResultDisplay", () => {
         result={EXACT_CORRECT_RESULT}
         landmarkName="Eiffel Tower"
         onPlayAgain={mockOnPlayAgain}
-        showPlayAgain={true}
       />,
     );
 

@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import App from "../../src/App";
 import * as api from "../../src/services/api";
-import { mockMap, mockMarker } from "../helpers/mapMocks";
+import { mockMap, mockMarker, mockLngLatBounds } from "../helpers/mapMocks";
 import { EIFFEL_TOWER_WITHOUT_LOCATION } from "../fixtures/landmarks";
 
 vi.mock("mapbox-gl", () => ({
@@ -13,6 +13,9 @@ vi.mock("mapbox-gl", () => ({
     }),
     Marker: vi.fn(function Marker() {
       return mockMarker;
+    }),
+    LngLatBounds: vi.fn(function LngLatBounds() {
+      return mockLngLatBounds;
     }),
   },
 }));

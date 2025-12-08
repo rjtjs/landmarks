@@ -1,7 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getItem, setItem } from "../utils/localStorage";
-
-type Theme = "light" | "dark";
+import {
+  getTheme,
+  setTheme as saveTheme,
+  type Theme,
+} from "../utils/localStorage";
 
 interface ThemeContextType {
   theme: Theme;
@@ -12,10 +14,8 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
-    const stored = getItem("theme");
-    if (stored) {
-      return stored;
-    }
+    const stored = getTheme();
+    if (stored) return stored;
     return window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
@@ -23,7 +23,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
-    setItem("theme", theme);
+    saveTheme(theme);
   }, [theme]);
 
   const toggleTheme = () => {

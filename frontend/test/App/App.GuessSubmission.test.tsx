@@ -3,7 +3,12 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import App from "../../src/App";
 import * as api from "../../src/services/api";
-import { mockMap, mockMarker, simulateMapClick } from "../helpers/mapMocks";
+import {
+  mockMap,
+  mockMarker,
+  mockLngLatBounds,
+  simulateMapClick,
+} from "../helpers/mapMocks";
 import {
   EIFFEL_TOWER_WITHOUT_LOCATION,
   EXACT_CORRECT_RESULT,
@@ -19,6 +24,9 @@ vi.mock("mapbox-gl", () => ({
     }),
     Marker: vi.fn(function Marker() {
       return mockMarker;
+    }),
+    LngLatBounds: vi.fn(function LngLatBounds() {
+      return mockLngLatBounds;
     }),
   },
 }));

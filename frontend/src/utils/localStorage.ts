@@ -5,40 +5,49 @@ import type {
   PrecisionLevelType,
 } from "@landmarks/shared";
 
-type StorageKey = "theme" | "gameState";
-
-interface GameState {
+export interface GameState {
   landmark: LandmarkWithoutLocation | null;
   guessLocation: LngLat | null;
   result: GuessResult | null;
   selectedPrecision: PrecisionLevelType;
 }
 
-type StorageValue<K extends StorageKey> = K extends "theme"
-  ? "light" | "dark"
-  : K extends "gameState"
-    ? GameState
-    : never;
+export type Theme = "light" | "dark";
 
-export function getItem<K extends StorageKey>(key: K): StorageValue<K> | null {
-  const item = localStorage.getItem(key);
+export function getGameState(): GameState | null {
+  const item = localStorage.getItem("gameState");
   if (!item) return null;
-
   try {
     return JSON.parse(item);
   } catch {
-    localStorage.removeItem(key);
+    localStorage.removeItem("gameState");
     return null;
   }
 }
 
-export function setItem<K extends StorageKey>(
-  key: K,
-  value: StorageValue<K>,
-): void {
-  localStorage.setItem(key, JSON.stringify(value));
+export function setGameState(state: GameState): void {
+  localStorage.setItem("gameState", JSON.stringify(state));
 }
 
-export function removeItem(key: StorageKey): void {
-  localStorage.removeItem(key);
+export function removeGameState(): void {
+  localStorage.removeItem("gameState");
+}
+
+export function getTheme(): Theme | null {
+  const item = localStorage.getItem("theme");
+  if (!item) return null;
+  try {
+    return JSON.parse(item);
+  } catch {
+    localStorage.removeItem("theme");
+    return null;
+  }
+}
+
+export function setTheme(theme: Theme): void {
+  localStorage.setItem("theme", JSON.stringify(theme));
+}
+
+export function removeTheme(): void {
+  localStorage.removeItem("theme");
 }
